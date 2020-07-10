@@ -1,0 +1,191 @@
+---
+title: "Peat Depth Model: Predict"
+params:
+  params_fn: 
+    input: file
+    label: 'Select parameters to import (.rds)'
+    value: "../data/parameters.rds"
+output:
+    html_notebook:
+    html_document:
+    df_print: paged
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo= TRUE)
+```
+
+-------  
+
+Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+
+```{r, echo=FALSE}
+#import parameters from previous runs
+parameters <- readRDS(file = params$params_fn)
+
+# if you need to change any imported parameters, do it here, e.g.: 
+  #parameters$existing_parameter <- newvalue
+  #parameters$new_parameter <- value
+
+# add new parameters from yaml header
+
+  # automatically defined session variables 
+  #set current time and date to append to run log 
+
+# print list of all parameters
+parameters
+  
+#set params for script
+par.ori <- par() #save default plotting parameters
+
+
+```
+
+
+-------    
+
+## Introduction
+
+This script predicts peat depths from models created in previous scripts.  It outputs:   
+
+*   a raster of predicted depths
+*   a raster of prediction variance
+
+
+
+```{r}
+#load packages
+library(tidyverse)#
+library(raster)
+library(rgdal)
+library(sp)
+library(sf)
+library(elevatr)
+library(geoR)
+library(gstat)
+library(stars)
+```
+## 1. Import previously prepared data
+
+```{r}
+model.geo <- readRDS("~/GitHub/Peat_Depth_Model_pr/workflow/outputs/model.geo__dart_run_20200623-1159.rds")
+```
+
+```{r}
+summary(model.geo)
+```
+
+```{r}
+model.geo$cov.pars
+```
+
+```{r}
+names(model.geo)
+```
+
+
+```{r}
+input.data.gs <- input.data.cropped.sp #spdf format
+
+#remove duplicates 
+input.data.gs <- remove.duplicates(obj = input.data.gs)
+
+sp_depth <- input.data.gs
+```
+
+
+```{r}
+# import elevation and slope
+
+elevation_st <- stars::read_stars(parameters$elev_raster_fn)
+slope_st <- read_stars(parameters$slope_raster_fn)
+ 
+preds_st <- c(elev = elevation_st, slope = slope_st)
+names(preds_st) <- c("elev", "slope")
+
+rm(elevation_st, slope_st)
+
+#plot(preds_st[1])
+```
+
+
+```{r}
+sp_depth <- sp::spTransform(x = sp_depth, CRSobj = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +a=6377563.396 +rf=299.324975315035 +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
+```
+
+
+```{r}
+# preds_st <- st_transform_proj(x = preds_st, crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
+# 
+# preds_st <- st_transform_proj(x = preds_st, crs = proj4string(sp_depth))
+```
+
+```{r}
+#ggplot() + geom_stars(preds_st) + coord_equal()
+```
+
+```{r}
+# library(ggplot2)
+# ggplot() + geom_stars(data = preds_st) +
+#     coord_equal() +
+#     facet_wrap(~band) +
+#     theme_void() +
+#     scale_x_discrete(expand=c(0,0))+
+#     scale_y_discrete(expand=c(0,0))
+```
+
+
+
+## Prediction
+
+
+```{r}
+krige.out <- krige(formula = sqrt_depth ~ elev + slope, 
+                   locations = sp_depth,
+                   newdata = preds_st,
+                   model = model.geo)
+```
+
+```{r}
+saveRDS(object = krige.out, file = paste0("../outputs/krige.out_", 
+                      parameters$area_abbr, "_",
+                      rundate, ".rds"))
+```
+
+
+```{r}
+class(krige.out)
+str(krige.out)
+plot(krige.out)
+```
+
+```{r}
+stars::write_stars()
+
+methods(class = "stars")
+```
+
+```{r}
+krige.pred.rst <- raster(krige.out$var1.pred)
+krige.var.rst <- raster(krige.out$var1.var)
+
+writeRaster(x = krige.pred.rst, 
+            filename = paste0("../outputs/krige.pred_", parameters$area_abbr, "_",
+                      rundate, ".tif"))
+
+writeRaster(x = krige.var.rst, 
+            filename = paste0("../outputs/krige.var_", parameters$area_abbr, "_",
+                      rundate, ".tif"))
+
+rm(krige.pred.rst, krige.var.rst)
+rm(krige.out)
+
+```
+
+
+
+
+
+
+

@@ -1,0 +1,152 @@
+---
+title: "Peat Depth Model main script"
+params:
+  obs_path:
+    input: file
+    label: 'Observations data (shapefile):'
+    value: ..\data\NNPA\Peat Depths.shp
+  projection:
+    input: text
+    label: 'Enter projection:'
+    value: +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000
+      +datum=OSGB36 +units=m +no_defs
+  field_x:
+    input: text
+    label: "x coordinate field:"
+    value: "POINT_X"
+  field_y:
+    input: text
+    label: "y coordinate field:"
+    value: "POINT_Y"
+  field_depth:
+    input: text
+    label: "peat depth field:"
+    value: "PEAT_DEPTH"
+  field_cat1:
+    input: text
+    label: "peat type field:"
+    value: "NA"
+  field_cat2:
+    input: text
+    label: "measurement type field:"
+    value: "NA"
+  subs_dist:
+    label: 'Subset by distance:'
+    value: no
+  band_n:
+    input: numeric
+    label: 'If subset: max number of samples per band'
+    value: 10
+  band_w:
+    input: numeric
+    label: 'If subset: distance band width (metres)'
+    value: 10
+output:
+    html_notebook:
+    html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Workflow
+
+This is the main script forming part of a workflow to model peat depth for a given area.  The entire workflow relies on a number of addtional scripts and is described here.  
+
+1. Import and prepare data using `import_prepare_data.Rmd`
+2. Explore and select data using `explore_and_select_data.Rmd`
+3. Create a model using `model.Rmd`
+4. Evaluate the model using `evaluate.Rmd`
+5. Report and visualise model metrics using `visualise_model_results_template.Rmd`
+6. Produce prediction and variance rasters for export using `predict.Rmd`
+7. Review and refine, going back to step 1 or 2 as often as necessary.
+
+In addition to those scripts there are helper scripts with useful functions: 
+
+* `rsquared_funs.R` defines functions for calculating the metrics *r-squared* and *adjusted r-squared*.  
+
+## Setup
+
+At the moment a bit of manual preparation is required: 
+
+1. Use RStudio and create and RStudio project for your work.  
+2. In the project home directory, create a directory for the area you are modelling and give it a unique name (e.g. 'dartmoor')  
+3. In that directory, create the following folders   
+    
+    + `data`
+    + `outputs`
+    + `R`  
+    
+4.    Into folder `R` copy the above scripts.  
+
+
+## About parmaterised RMarkdown scripts
+
+These are parameterised RMarkdown scripts.  This means that all the user defined parameters are declared in the yaml header, and when the command `knit_with_parameters('~/GitHub/Peat_Depth_Model_pr/workflow/R/main.Rmd')` (where `workflow` should be replaced with the name you gave the directory) is given:  
+
+* a dialogue window appears asking the user to enter or confirm these parameters, 
+* the script is executed, and
+* an html document is produced containing the formatted text, code, console outputs and visual outputs (unless any of these have been marked to be suppressed in the header of the code block). 
+
+The html document can then be stored as a record of the run.  Currently it is set to be overwritten on the next call to `knit` so you must rename or move the document to retain it.  
+There are two ways of running these scripts: 
+
+### Running each code block separately
+
+To do this you need to change the input parameters in the yaml header above.  E.g. to change the peat depth data file, edit the file path next to `value:` under the parameter `obs_path`:   
+```
+params:
+  obs_path:
+    input: file
+    label: 'Observations data (shapefile):'
+    value: ..\data\NNPA\Peat Depths.shp
+```
+Note that the value is not in quotations.  The advantage of this is that you can test your parameters at each stage and change them.  You can also change the code.  
+
+Once you are happy with the paramters and the code, you can produce an output document by clicking `Knit`.  
+
+### Running the whole code in one go
+
+To do this, select the toggle next to the `Knit` command and select `Knit with Parameters...`.  A dialogue will appear and ask you to enter the parameters for the model run.  
+
+
+```{r}
+#install.packages(c("geoR", "tidyverse", "sf", "sp", "gstat", "raster"))
+library(geoR)
+library(tidyverse)
+library(sf)
+library(sp)
+library(gstat)
+library(raster)
+```
+
+
+```{r}
+## Set variables
+# user defined variables
+
+  #set full path to observation data
+obs_path <- params$obs_path
+   #coordinate reference system
+proj4 <- params$projection
+  #choose whether to subset by distance band
+subs_dist <- params$subs_dist
+  # distance band width (metres)
+band_w <-  params$band_w
+  # max number of samples per band  
+band_n <- params$band_n 
+  
+
+
+# automatically defined session variables 
+
+  #set current time and date to append to run log 
+rundate <- paste0("run_", format(Sys.time(), format = "%Y%m%d-%H%M"))
+
+par.ori <- par() #save default plotting parameters
+
+```
+
+
