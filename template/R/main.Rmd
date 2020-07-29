@@ -1,6 +1,5 @@
 ---
 title: "Peat Depth Model main script"
-
 output:
   github_document: default
   html_notebook: default
@@ -48,9 +47,6 @@ In addition there are helper scripts with useful functions:
 At the end of each script any outputs are saved to file and an R object `parameters` is saved.  `parameters` can then be read by subsequent scripts to continue the workflow.  This means you can close an R session between scripts without losing work done in the previous script.  Some of these parameters are used in keeping track of the workflow: 
 
 *  `area_abbr`: A user defined abbreviation for the area to be modelled (e.g. "dart" for Dartmoor)
-
-
-
 
 
 ## About parameterised RMarkdown scripts

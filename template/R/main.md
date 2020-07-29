@@ -57,11 +57,21 @@ these parameters are used in keeping track of the workflow:
   - `area_abbr`: A user defined abbreviation for the area to be modelled
     (e.g. “dart” for Dartmoor)
 
+<<<<<<< HEAD
 ## About parameterised RMarkdown scripts
 
 In parameterised RMarkdown scripts all the user defined parameters are
 declared in the yaml header, and when the command
 `knit_with_parameters('R/main.Rmd')` is given:
+=======
+## About parmaterised RMarkdown scripts
+
+These are parameterised RMarkdown scripts. This means that all the user
+defined parameters are declared in the yaml header, and when the command
+`knit_with_parameters('~/GitHub/Peat_Depth_Model_pr/workflow/R/main.Rmd')`
+(where `workflow` should be replaced with the name you gave the
+directory) is given:
+>>>>>>> 284eda1b28a2f65bd470f7c347a4a7ee0aadb500
 
   - a dialogue window appears asking the user to enter or confirm these
     parameters,
