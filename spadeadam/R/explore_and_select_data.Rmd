@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters.rds"
+    value: "../data/parameters_spade.rds"
 output:
     html_notebook:
     html_document:
@@ -84,9 +84,8 @@ pred_stack <- stack(elevation, slope)
 ```{r}
 ggplot(input.data %>% filter(depth != 0), 
        aes(x = depth)) +
-  geom_histogram(binwidth = 0.1, boundary = 0) +
-  #scale_x_continuous(breaks = seq(0,20), minor_breaks = NULL) +
-  labs(title = "Distribution of peat depths sampled", x = "Peat depth in metres") +
+  geom_histogram(bins = 100) +
+  labs(title = "Distribution of peat depths sampled", x = "Peat depth in cm") +
   theme_light()
 ```
 
@@ -110,7 +109,7 @@ p.sl.el <- ggplot(input.data, aes(x = elev, y = slope)) +
   geom_point(aes(colour = depth), size = 1)+
   geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
   scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
-  coord_fixed(ratio = 15) +
+  #coord_fixed(ratio = 15) +
   theme_light() +
   labs(title = "Peat depth: elevation by slope")
 
