@@ -4,7 +4,15 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters.rds"
+    value: "../data/parameters_spade.rds"
+  model_fn: 
+    input: file
+    label: 'Select model to import (.rds)'
+    value: "../outputs/model.geo__spade_run_20200806-1552.rds"
+  inputs_fn: 
+    input: file
+    label: 'Select input data to import (.rds)'
+    value: "../outputs/input.data.gs_spade_run_20200806-1612.rds"
 output:
     html_notebook:
     html_document:
@@ -31,13 +39,12 @@ parameters <- readRDS(file = params$params_fn)
 
 # add new parameters from yaml header
 
-  # automatically defined session variables 
-  #set current time and date to append to run log 
+parameters <- c(parameters, params)
 
 # print list of all parameters
 parameters
   
-#set params for script
+#store graphics params in case things go wrong
 par.ori <- par() #save default plotting parameters
 
 
@@ -68,73 +75,12 @@ library(gstat)
 
 ## 4. Ten-fold cross validation    
 
- Split the data into 10 roughly equally sized groups, and use 9 groups to fit
- the model and predict sqrt depth for the tenth group. Repeat this for each of
- the 10 groups in turn.
- This may depend on how the data are split into 10 groups, so repeat this 10
- times with different groupings to average over this variation.
+This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross validation
 
- WARNING - this will take a while (hours) to run for large datasets.
-
- The code below runs two models:
- 
- - a simple linear model with given covariates.
- - a spatial correlation model with the same covariates.
- - common spatial covariance models are exponential, spherical and matern.
- 
- This is a non-Bayesian analysis.
-
-#### Create a matrix to store the results
- Store for each model the prediction and a 95% prediction interval
- Fit two models, a linear model with no spatial correlation (LM) and a full
- spatial correlation model with the same mean function (SM).
- LPI and UPI stand for lower / upper prediction interval.
-
-
+import model and data
 ```{r}
-#subset dat for testing
-# 
-# dat.orig <- dat
-# dat <- sample_n(tbl = dat, size = 120, replace = FALSE)
-
-```
-
-```{r}
-## Array - rows, columns, number of arrays #don't need this for gstat
-dat <- data.frame(sp_depth@data,
-                  sp_depth@coords) %>%
-  rename(x = X, y = Y)
-
-n <- nrow(dat)
-results <- array(NA, c(n, 6,10))
-colnames(results) <- c("pred_LM", "LPI_LM", "UPI_LM", 
-                       "pred_SM", "LPI_SM", "UPI_SM")
-
-#note on results array: the dimensions are: points, metrics, runs
-
-```
-
-Deal with categorical variables
- 
-```{r}
-#uncomment if using categorical variables
-# 
-# #Which are the columns with factors?
-# dat.fact <- dat[ ,sapply(dat, is.factor)]
-# #We don't need the Aspect_cat
-# dat.fact <- dat.fact[ ,-2]
-# #Keep only the unique rows
-# dat.fact <- dat.fact[!duplicated(dat.fact), ]
-# dummy <- dat[c(1, 2, 18, 106), ]
-# dummy <- dat[row.names(dat.fact), ]
-# dummy$longitude <- dummy$longitude + rnorm(dim(dummy)[1], sd = 0.01)
-# dummy$latitude <- dummy$latitude + rnorm(dim(dummy)[1], sd = 0.01)
-# n.dummy <- nrow(dummy)
-```
-
-import model if necessary
-```{r}
-#model.geo <- readRDS("../outputs/model.geo__nhumb_run_20200603-1632.rds")
+if(!exists("model.geo")){model.geo <- readRDS(parameters$model_fn)}
+if(!exists("sp_depth")){sp_depth <- readRDS(parameters$inputs_fn)}
 ```
 
 
@@ -205,25 +151,21 @@ paste0("R2 = ", rsq(observed = obs, predicted = pred) %>% round(3),
       ", R2 adj = ", rsq.adj(observed = obs, predicted = pred,
                              n.predictors = 2, df.int = 1) %>% round(3),
       ", RMSE = ", rmse(observed = obs, predicted = pred) %>% round(3), " cm")
-
-model_equation(model = lm.depth)
 ```
 
-
-######### delete this
 
 ```{r}
 #null model lm
 lm.depth <- lm(depth ~ elev + slope, sp_depth)
 summary(lm.depth)
 
-pred <- lm.depth$fitted.values
-obs <- lm.depth$model$depth
+pred.lm <- lm.depth$fitted.values
+obs.lm <- lm.depth$model$depth
 
-paste0("R2 = ", rsq(observed = obs, predicted = pred) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = obs, predicted = pred,
+paste0("R2 = ", rsq(observed = obs.lm, predicted = pred.lm) %>% round(3),
+      ", R2 adj = ", rsq.adj(observed = obs.lm, predicted = pred.lm,
                              n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = obs, predicted = pred) %>% round(3), " cm")
+      ", RMSE = ", rmse(observed = obs.lm, predicted = pred.lm) %>% round(3), " cm")
 
 model_equation(model = lm.depth)
 ```
@@ -239,152 +181,6 @@ rsq(observed = sp_depth$depth, predicted = pred.parry)
 rsq.adj(observed = sp_depth$depth, predicted = pred.parry, n.predictors = 2, df.int = 1)
 
 rmse(observed = sp_depth$depth, predicted = pred.parry)
-```
-
-
-
-
-#  
-#  
-#### The big loop:  
-I can't get this to work.  Keep getting NaNs at the kriging stage and not sure why.  
-
-```{r include=FALSE}
-# set up parallel processing
-library(doParallel)
-library(foreach)
-
-# calculate cluster size and register parallel backend
-
-ncores <- detectCores()-2 # uses 2 less than the total number of available cores
-cl <- makeCluster(ncores)
-registerDoParallel(cl)
-paste("Using", ncores, "cores of", detectCores())
-
-timestart <- Sys.time()
-# Loop over the 10 replications of splitting the data into 10 equally size groups.
-
-nreps <- 10
-
-#foreach(r=1:nreps, .packages = c("geoR", "gstat"), .combine = "rbind") %dopar% {
- for(r in 1:nreps) {
-
-  print(paste("rep:", r))
-# Split the sites into 10 random groups of equal size.
- 
-#  # Create random orderings until each of the 10 groups has at least one Winter Hill soil type
-# test=1
-#     while(test==1)
-#     {
-
-  # Create random orderings
-    data.order <- sample(1:n)
-    split_m_total <- length(data.order)
-    split_m_G2 <- as.integer(split_m_total / 10)
-    split_m_size <- length(data.order) %% 10
-    # Therefore split_m_size chunks will have size split_m_G2 + 1 and the
-    # remaining will have size split_size_G2
-    split_m_G1 <- split_m_G2 + 1
-
-    # For all data
-    # To allow for changes in number of rows in dat
-
-            #I think this bit of code breaks when n is divisible by 10, hence test first if n/10 is a whole number:   
-    ifelse(test = (abs((n/10) - round((n/10))) != 0), 
-           yes = split.matrix <-
-             data.frame(sites=data.order,
-                        group = c(kronecker(1:split_m_size, rep(1,split_m_G1)),
-                                  kronecker((split_m_size + 1):10, rep(1,split_m_G2)))), 
-           no= split.matrix <-
-             data.frame(sites=data.order,
-                        group = kronecker((split_m_size + 1):10, rep(1,split_m_G2)))
-           )
-    
-    
-    
-     # here column 1 is the row numbers and column 2 is the group number
-    #  # Check each group has 2 Soil types
-    # types <- rep(NA,10)
-    #     for (j in 1:10)
-    #     {
-    #     dat.temp <- dat[split.matrix[split.matrix$group == j,1] , ]
-    #     types[j] <- sum(table(dat.temp$Soil) == nrow(dat.temp))
-    #     }
-    # test <- max(types)
-    # }
-
-# Undertake the 10-fold cross validation
-   for (i in 1:10) {
-     # Set up the fitting and the prediction data sets
-    dat.fit <- dat[split.matrix[split.matrix$group!=i,1] , ]
-    dat.pred <- dat[split.matrix[split.matrix$group==i,1] , ]
-    if(exists("dummy")){dat.pred <- rbind(dat.pred, dummy)}
-    sp_depth.fit <- sp_depth[split.matrix$group!=i,]
-    sp_depth.pred <- sp_depth[split.matrix[split.matrix$group==i,1] , ]
-
-     # Fit the linear model
-    model.lm <- lm(cbrt_depth ~ elev + slope, data=dat.fit)
-    model.lm.predictions <- 
-      predict(object=model.lm, newdata=dat.pred, interval="prediction")
-
-     # Fit the spatial model
-    model.sm <-
-       fit.variogram(object = variogram(cbrt_depth ~ elev + slope, sp_depth.fit),
-                     model = vgm(psill = NA, model = "Mat", range = NA,
-                                 nugget = NA), fit.method = 1)
-      
-     # There are alternative spatial correlation models  so you could use these instead of exponential (e.g. spherical)
-    print(paste("rep: ", r, "split: ", i)) # Monitor progress; each of the 10 r will be run 10(i) times.
-
-     # Do the predictions
-    
-    kriging.sm <- krige(formula = cbrt_depth ~ elev + slope, 
-                   locations = sp_depth.fit,
-                   newdata = sp_depth.pred,
-                   model = model.sm)
- 
-    model.sm.predictions <-
-      cbind(kriging.sm$var1.pred,
-            kriging.sm$var1.pred - 1.96 * sqrt(kriging.sm$var1.var),
-            kriging.sm$var1.pred + 1.96 * sqrt(kriging.sm$var1.var))
-
-     # Save the results but removing the last n.dummy values added to make the
-     # kriging function work
-    ifelse(exists("n.dummy"), 
-           n.preds <- nrow(dat.pred) - n.dummy, 
-           n.preds <- nrow(dat.pred))
-
-    for(j in 1:n.preds)
-    {
-         # Choose the row (site) the  prediction corresponds to.     
-        which.row <- which(rownames(dat.pred)[j]==rownames(dat))
-
-         # Save the results
-        results[which.row, 1:3, r] <- model.lm.predictions[j, ]
-        results[which.row, 4:6, r] <- model.sm.predictions[j, ]
-    }
-    
-  }
-    model.lm.predictions
-}
-
-(timeelapsed <- Sys.time() - timestart )
-```
-
-
-
-   
-```{r}
-str(results)
-#results[,,]
-row.names(results[1,,])
-colnames(results)
-```
-
-### Back transform predictions
-
-```{r}
-results.btf <- results^3
 ```
 
 
