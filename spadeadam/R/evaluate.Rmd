@@ -69,6 +69,7 @@ library(sf)
 library(elevatr)
 library(geoR)
 library(gstat)
+library(stars)
 ```
 ## 1. Import previously prepared data
 
@@ -83,56 +84,163 @@ if(!exists("model.geo")){model.geo <- readRDS(parameters$model_fn)}
 if(!exists("sp_depth")){sp_depth <- readRDS(parameters$inputs_fn)}
 ```
 
+```{r}
+set.seed(4321)
+```
+
 
 
 ```{r}
-results.cv <- krige.cv(formula = cbrt_depth ~ elev + slope, 
+sm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope, 
                        locations = sp_depth, 
                        model = model.geo, 
                        nfold=10)
-bubble(results.cv, "residual", main = "10-fold CV residuals")
-results.cv@data
+names(sm.cv) <- c("pred.sm", "var.sm", "observed", "resid.sm", "zscore.sm", "fold.sm")
 
-# mean error, ideally 0:
-mean(results.cv$residual)
-# MSPE, ideally small
-mean(results.cv$residual^2)
-# Mean square normalized error, ideally close to 1
-mean(results.cv$zscore^2)
-# correlation observed and predicted, ideally 1
-cor(results.cv$observed, results.cv$var1.pred)
-# correlation predicted and residual, ideally 0
-cor(results.cv$var1.pred, results.cv$residual)
 ```
 
 ```{r}
-# RSquared
-rsq(observed = results.cv$observed, predicted = results.cv$var1.pred)
-
-# Adjusted RSquared
-rsq.adj(observed = results.cv$observed, predicted = results.cv$var1.pred, n.predictors = 3, df.int = 1)
-
+bubble(sm.cv, "resid.sm", main = "10-fold CV residuals")
 ```
+```{r}
+intervals.sm <- sm.cv@data %>% mutate( 
+  LPI.sm = pred.sm - 1.96 * sqrt(var.sm),
+  UPI.sm = pred.sm + 1.96 * sqrt(var.sm),
+  obsInInt = observed < UPI.sm & observed > LPI.sm) %>% 
+  select(pred.sm, var.sm, observed, LPI.sm, UPI.sm, obsInInt)
+```
+
+```{r}
+sm.cv@data
+```
+
+```{r}
+paste("raw metrics (not back-transformed):",
+# mean error, ideally 0:
+"mean error =", mean(sm.cv$resid.sm) %>% round(3), 
+# MSPE, ideally small
+", MSPE =", mean(sm.cv$resid.sm^2) %>% round(3),
+#Mean square normalized error, ideally close to 1
+", mean square norm. error =", mean(sm.cv$zscore.sm^2) %>% round(3),
+# correlation observed and predicted, ideally 1
+", cor obs&pred =", cor(sm.cv$observed, sm.cv$pred.sm) %>% round(3),
+# correlation predicted and residual, ideally 0
+", cor pred&resid =", cor(sm.cv$pred.sm, sm.cv$resid.sm) %>% round(3),
+# RSquared
+", R2 =", rsq(observed = sm.cv$observed, predicted = sm.cv$pred.sm) %>% round(3),
+# Adjusted RSquared
+", R2 adj =", rsq.adj(observed = sm.cv$observed, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
+)
+```
+
+```{r}
+#linear model cv
+lm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope, 
+                       locations = sp_depth, 
+                       model = NULL, 
+                       nfold=10)
+names(lm.cv) <- c("pred.lm", "var.lm", "observed", "resid.lm", "zscore.lm", "fold.lm")
+
+#bubble(lm.cv, "residual", main = "10-fold CV residuals")#
+```
+
+
+```{r}
+paste("raw metrics (not back-transformed):",
+# mean error, ideally 0:
+"mean error =", mean(lm.cv$resid.lm) %>% round(3), 
+# MSPE, ideally lmall
+", MSPE =", mean(lm.cv$resid.lm^2) %>% round(3),
+#Mean square normalized error, ideally close to 1
+", mean square norm. error =", mean(lm.cv$zscore.lm^2) %>% round(3),
+# correlation observed and predicted, ideally 1
+", cor obs&pred =", cor(lm.cv$observed, lm.cv$pred.lm) %>% round(3),
+# correlation predicted and residual, ideally 0
+", cor pred&resid =", cor(lm.cv$pred.lm, lm.cv$resid.lm) %>% round(3),
+# RSquared
+", R2 =", rsq(observed = lm.cv$observed, predicted = lm.cv$pred.lm) %>% round(3),
+# Adjusted RSquared
+", R2 adj =", rsq.adj(observed = lm.cv$observed, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
+)
+```
+
 
 
 
 ```{r}
 #calc intervals and backtransform
-intervals <- cbind(
-  pred = results.cv$var1.pred,
-  LPI = results.cv$var1.pred - 1.96 * sqrt(results.cv$var1.var),
-  UPI = results.cv$var1.pred + 1.96 * sqrt(results.cv$var1.var))
-
-intervals.btf <- intervals^3
-
-head(data.frame(cbrt = intervals, btf1 = intervals.btf)) %>% t()
+intervals.lm <- lm.cv@data %>% mutate(
+  LPI.lm = pred.lm - 1.96 * sqrt(var.lm),
+  UPI.lm = pred.lm + 1.96 * sqrt(var.lm),
+  obsInInt = observed < UPI.lm & observed > LPI.lm) %>% 
+  select(pred.lm, var.lm, observed, LPI.lm, UPI.lm, obsInInt)
+intervals.lm %>% data.frame() %>% colMeans()
 ```
+
+
+```{r}
+#merge cv datasets and backtransform
+results.cv <- cbind(sm = sm.cv, lm = lm.cv)
+results.cv <- results.cv@data %>% mutate(
+  btf.obs = observed^3, 
+  btf.pred.sm = pred.sm^3, 
+  btf.pred.lm = results.cv$pred.lm^3)
+```
+
+
+
+
+
+
+
+
+
+```{r}
+cv <- results.cv %>% summarise(
+  rmse.lm = rmse(observed = btf.obs, predicted = btf.pred.lm) %>% round(3), 
+  r2.lm = rsq(observed = btf.obs, predicted = btf.pred.lm) %>% round(3),
+  r2adj.lm = rsq.adj(observed = btf.obs, predicted = btf.pred.lm, n.predictors = 3, df.int = 1) %>% round(3),
+  coverage.lm = mean(intervals.lm$obsInInt), 
+  bias.lm = mean(btf.pred.lm - btf.obs), 
+  interv.lm = mean(intervals.lm$UPI.lm - intervals.lm$LPI.lm)^3, 
+  rmse.sm = rmse(observed = btf.obs, predicted = btf.pred.sm) %>% round(3), 
+  r2.sm = rsq(observed = btf.obs, predicted = btf.pred.sm) %>% round(3),
+  r2adj.sm =  rsq.adj(observed = btf.obs, predicted = btf.pred.sm, n.predictors = 3, df.int = 1) %>% round(3),
+  coverage.sm = mean(intervals.sm$obsInInt), 
+  bias.sm = mean(btf.pred.sm - btf.obs), 
+  interv.sm = mean(intervals.sm$UPI.sm - intervals.sm$LPI.sm)^3
+)
+```
+
+
+
+
+```{r}
+predictors <- raster::stack(parameters$elev_raster_fn, parameters$slope_raster_fn)
+names(predictors) <- c("elevation", "slope")
+
+prdr <- c(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
+            depth_min = as.numeric(NA), depth_max = as.numeric(NA),
+            elev_min = minValue(predictors$elevation) %>% round(2), elev_max = maxValue(predictors$elevation) %>% round(2),
+            slope_min = minValue(predictors$slope) %>% round(2), slope_max = maxValue(predictors$slope) %>% round(2))
+```
+
+
+
+
+
+
+
+
+
+
+
 ```{r}
 #calc RMSE and backtf
 rmse.cv.btf <- sqrt(mean(((results.cv$var1.pred^3) - (results.cv$observed^3))^2))
 rmse.cv.btf
-#rmse(observed = results.cv$observed^3, predicted = results.cv$var1.pred^3)
 ```
+
 ```{r}
 #backtf and calc rsq
 
@@ -177,10 +285,12 @@ model_equation(model = lm.depth)
 
 pred.parry <- exp(0.875 + 0.00758 * sp_depth$elev - 0.0903 * sp_depth$slope) - 25 + (0.5 * exp(0.875 + 0.00758 * sp_depth$elev - 0.0903 * sp_depth$slope))
 
-rsq(observed = sp_depth$depth, predicted = pred.parry)
-rsq.adj(observed = sp_depth$depth, predicted = pred.parry, n.predictors = 2, df.int = 1)
 
-rmse(observed = sp_depth$depth, predicted = pred.parry)
+paste0("R2 = ", rsq(observed = sp_depth$depth, predicted = pred.parry) %>% round(3),
+      ", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = pred.parry,
+                             n.predictors = 2, df.int = 1) %>% round(3),
+      ", RMSE = ", rmse(observed = sp_depth$depth, predicted = pred.parry) %>% round(3), " cm")
+
 ```
 
 
