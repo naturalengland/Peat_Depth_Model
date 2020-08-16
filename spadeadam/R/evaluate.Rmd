@@ -115,21 +115,21 @@ sm.cv@data
 ```
 
 ```{r}
-paste("raw metrics (not back-transformed):",
+cat(sep = "", "Spatial model cross-validation metrics (not back-transformed):",
 # mean error, ideally 0:
-"mean error =", mean(sm.cv$resid.sm) %>% round(3), 
+"\nmean error = ", mean(sm.cv$resid.sm) %>% round(3), 
 # MSPE, ideally small
-", MSPE =", mean(sm.cv$resid.sm^2) %>% round(3),
+", MSPE = ", mean(sm.cv$resid.sm^2) %>% round(3),
 #Mean square normalized error, ideally close to 1
-", mean square norm. error =", mean(sm.cv$zscore.sm^2) %>% round(3),
+", mean square norm. error = ", mean(sm.cv$zscore.sm^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", cor obs&pred =", cor(sm.cv$observed, sm.cv$pred.sm) %>% round(3),
+", \ncor obs&pred = ", cor(sm.cv$observed, sm.cv$pred.sm) %>% round(3),
 # correlation predicted and residual, ideally 0
-", cor pred&resid =", cor(sm.cv$pred.sm, sm.cv$resid.sm) %>% round(3),
+", cor pred&resid = ", cor(sm.cv$pred.sm, sm.cv$resid.sm) %>% round(3),
 # RSquared
-", R2 =", rsq(observed = sm.cv$observed, predicted = sm.cv$pred.sm) %>% round(3),
+", R2 = ", rsq(observed = sm.cv$observed, predicted = sm.cv$pred.sm) %>% round(3),
 # Adjusted RSquared
-", R2 adj =", rsq.adj(observed = sm.cv$observed, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = sm.cv$observed, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
@@ -146,21 +146,21 @@ names(lm.cv) <- c("pred.lm", "var.lm", "observed", "resid.lm", "zscore.lm", "fol
 
 
 ```{r}
-paste("raw metrics (not back-transformed):",
+cat(sep = "", "Linear model cross-validation metrics (not back-transformed):",
 # mean error, ideally 0:
-"mean error =", mean(lm.cv$resid.lm) %>% round(3), 
+"\nmean error = ", mean(lm.cv$resid.lm) %>% round(3), 
 # MSPE, ideally lmall
-", MSPE =", mean(lm.cv$resid.lm^2) %>% round(3),
+", MSPE = ", mean(lm.cv$resid.lm^2) %>% round(3),
 #Mean square normalized error, ideally close to 1
-", mean square norm. error =", mean(lm.cv$zscore.lm^2) %>% round(3),
+", mean square norm. error = ", mean(lm.cv$zscore.lm^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", cor obs&pred =", cor(lm.cv$observed, lm.cv$pred.lm) %>% round(3),
+", \ncor obs&pred = ", cor(lm.cv$observed, lm.cv$pred.lm) %>% round(3),
 # correlation predicted and residual, ideally 0
-", cor pred&resid =", cor(lm.cv$pred.lm, lm.cv$resid.lm) %>% round(3),
+", cor pred&resid = ", cor(lm.cv$pred.lm, lm.cv$resid.lm) %>% round(3),
 # RSquared
-", R2 =", rsq(observed = lm.cv$observed, predicted = lm.cv$pred.lm) %>% round(3),
+", R2 = ", rsq(observed = lm.cv$observed, predicted = lm.cv$pred.lm) %>% round(3),
 # Adjusted RSquared
-", R2 adj =", rsq.adj(observed = lm.cv$observed, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = lm.cv$observed, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
@@ -188,14 +188,8 @@ results.cv <- results.cv@data %>% mutate(
 ```
 
 
-
-
-
-
-
-
-
 ```{r}
+# summarise backtransformed cross-validation results
 cv <- results.cv %>% summarise(
   rmse.lm = rmse(observed = btf.obs, predicted = btf.pred.lm) %>% round(3), 
   r2.lm = rsq(observed = btf.obs, predicted = btf.pred.lm) %>% round(3),
