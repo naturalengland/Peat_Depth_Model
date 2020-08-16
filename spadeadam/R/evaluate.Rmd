@@ -95,7 +95,7 @@ sm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope,
                        locations = sp_depth, 
                        model = model.geo, 
                        nfold=10)
-names(sm.cv) <- c("pred.sm", "var.sm", "observed", "resid.sm", "zscore.sm", "fold.sm")
+names(sm.cv) <- c("pred.sm", "var.sm", "obs.tf", "resid.sm", "zscore.sm", "fold.sm")
 
 ```
 
@@ -106,8 +106,8 @@ bubble(sm.cv, "resid.sm", main = "10-fold CV residuals")
 intervals.sm <- sm.cv@data %>% mutate( 
   LPI.sm = pred.sm - 1.96 * sqrt(var.sm),
   UPI.sm = pred.sm + 1.96 * sqrt(var.sm),
-  obsInInt = observed < UPI.sm & observed > LPI.sm) %>% 
-  select(pred.sm, var.sm, observed, LPI.sm, UPI.sm, obsInInt)
+  obsInInt.sm = obs.tf < UPI.sm & obs.tf > LPI.sm) %>% 
+  select(pred.sm, var.sm, obs.tf, LPI.sm, UPI.sm, obsInInt.sm)
 ```
 
 ```{r}
@@ -123,13 +123,13 @@ cat(sep = "", "Spatial model cross-validation metrics (not back-transformed):",
 #Mean square normalized error, ideally close to 1
 ", mean square norm. error = ", mean(sm.cv$zscore.sm^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(sm.cv$observed, sm.cv$pred.sm) %>% round(3),
+", \ncor obs&pred = ", cor(sm.cv$obs.tf, sm.cv$pred.sm) %>% round(3),
 # correlation predicted and residual, ideally 0
 ", cor pred&resid = ", cor(sm.cv$pred.sm, sm.cv$resid.sm) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = sm.cv$observed, predicted = sm.cv$pred.sm) %>% round(3),
+", R2 = ", rsq(observed = sm.cv$obs.tf, predicted = sm.cv$pred.sm) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = sm.cv$observed, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = sm.cv$obs.tf, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
@@ -139,7 +139,7 @@ lm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope,
                        locations = sp_depth, 
                        model = NULL, 
                        nfold=10)
-names(lm.cv) <- c("pred.lm", "var.lm", "observed", "resid.lm", "zscore.lm", "fold.lm")
+names(lm.cv) <- c("pred.lm", "var.lm", "obs.tf", "resid.lm", "zscore.lm", "fold.lm")
 
 #bubble(lm.cv, "residual", main = "10-fold CV residuals")#
 ```
@@ -154,13 +154,13 @@ cat(sep = "", "Linear model cross-validation metrics (not back-transformed):",
 #Mean square normalized error, ideally close to 1
 ", mean square norm. error = ", mean(lm.cv$zscore.lm^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(lm.cv$observed, lm.cv$pred.lm) %>% round(3),
+", \ncor obs&pred = ", cor(lm.cv$obs.tf, lm.cv$pred.lm) %>% round(3),
 # correlation predicted and residual, ideally 0
 ", cor pred&resid = ", cor(lm.cv$pred.lm, lm.cv$resid.lm) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = lm.cv$observed, predicted = lm.cv$pred.lm) %>% round(3),
+", R2 = ", rsq(observed = lm.cv$obs.tf, predicted = lm.cv$pred.lm) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = lm.cv$observed, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = lm.cv$obs.tf, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
@@ -172,8 +172,8 @@ cat(sep = "", "Linear model cross-validation metrics (not back-transformed):",
 intervals.lm <- lm.cv@data %>% mutate(
   LPI.lm = pred.lm - 1.96 * sqrt(var.lm),
   UPI.lm = pred.lm + 1.96 * sqrt(var.lm),
-  obsInInt = observed < UPI.lm & observed > LPI.lm) %>% 
-  select(pred.lm, var.lm, observed, LPI.lm, UPI.lm, obsInInt)
+  obsInInt.lm = obs.tf < UPI.lm & obs.tf > LPI.lm) %>% 
+  select(pred.lm, var.lm, obs.tf, LPI.lm, UPI.lm, obsInInt.lm)
 intervals.lm %>% data.frame() %>% colMeans()
 ```
 
@@ -182,26 +182,27 @@ intervals.lm %>% data.frame() %>% colMeans()
 #merge cv datasets and backtransform
 results.cv <- cbind(sm = sm.cv, lm = lm.cv)
 results.cv <- results.cv@data %>% mutate(
-  btf.obs = observed^3, 
-  btf.pred.sm = pred.sm^3, 
-  btf.pred.lm = results.cv$pred.lm^3)
+  obs.btf = obs.tf^3, 
+  pred.sm.btf = pred.sm^3, 
+  pred.lm.btf = results.cv$pred.lm^3) %>% 
+  select(-obs.tf.1)
 ```
 
 
 ```{r}
 # summarise backtransformed cross-validation results
 cv <- results.cv %>% summarise(
-  rmse.lm = rmse(observed = btf.obs, predicted = btf.pred.lm) %>% round(3), 
-  r2.lm = rsq(observed = btf.obs, predicted = btf.pred.lm) %>% round(3),
-  r2adj.lm = rsq.adj(observed = btf.obs, predicted = btf.pred.lm, n.predictors = 3, df.int = 1) %>% round(3),
-  coverage.lm = mean(intervals.lm$obsInInt), 
-  bias.lm = mean(btf.pred.lm - btf.obs), 
+  rmse.lm = rmse(observed = obs.btf, predicted = pred.lm.btf) %>% round(3), 
+  r2.lm = rsq(observed = obs.btf, predicted = pred.lm.btf) %>% round(3),
+  r2adj.lm = rsq.adj(observed = obs.btf, predicted = pred.lm.btf, n.predictors = 3, df.int = 1) %>% round(3),
+  coverage.lm = mean(intervals.lm$obsInInt.lm), 
+  bias.lm = mean(pred.lm.btf - obs.btf), 
   interv.lm = mean(intervals.lm$UPI.lm - intervals.lm$LPI.lm)^3, 
-  rmse.sm = rmse(observed = btf.obs, predicted = btf.pred.sm) %>% round(3), 
-  r2.sm = rsq(observed = btf.obs, predicted = btf.pred.sm) %>% round(3),
-  r2adj.sm =  rsq.adj(observed = btf.obs, predicted = btf.pred.sm, n.predictors = 3, df.int = 1) %>% round(3),
-  coverage.sm = mean(intervals.sm$obsInInt), 
-  bias.sm = mean(btf.pred.sm - btf.obs), 
+  rmse.sm = rmse(observed = obs.btf, predicted = pred.sm.btf) %>% round(3), 
+  r2.sm = rsq(observed = obs.btf, predicted = pred.sm.btf) %>% round(3),
+  r2adj.sm =  rsq.adj(observed = obs.btf, predicted = pred.sm.btf, n.predictors = 3, df.int = 1) %>% round(3),
+  coverage.sm = mean(intervals.sm$obsInInt.sm), 
+  bias.sm = mean(pred.sm.btf - obs.btf), 
   interv.sm = mean(intervals.sm$UPI.sm - intervals.sm$LPI.sm)^3
 )
 t(cv)
@@ -224,31 +225,7 @@ rbind(prdr.summ, obs.summ)
 ```
 
 
-```{r}
-#calc RMSE and backtf
-rmse.cv.btf <- sqrt(mean(((results.cv$var1.pred^3) - (results.cv$observed^3))^2))
-rmse.cv.btf
-```
-
-```{r}
-#backtf and calc rsq
-
-#rsquared
-rsq(observed = results.cv$observed^3, predicted = results.cv$var1.pred^3)
-
-#adj r squared
-rsq.adj(observed = results.cv$observed^3, predicted = results.cv$var1.pred^3, n.predictors = 2, df.int = 1)
-
-```
-```{r}
-pred <- results.cv$var1.pred^3
-obs <- results.cv$observed^3
-
-paste0("R2 = ", rsq(observed = obs, predicted = pred) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = obs, predicted = pred,
-                             n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = obs, predicted = pred) %>% round(3), " cm")
-```
+## Calculate null model and literature model
 
 
 ```{r}
@@ -282,13 +259,22 @@ paste0("R2 = ", rsq(observed = sp_depth$depth, predicted = pred.parry) %>% round
 
 ```
 
-
-#### Write predictions to dataframe
+#>>>> got this
+#### Write everything to big dataframe
 need to also bind backtransformed results into this
 ```{r}
 #combine original data and predictions
-results.df <- cbind(id = seq(1:nrow(dat)), dat, data.frame(results))
+results.df <- cbind(id = seq(1:nrow(sp_depth)), 
+                    sp_depth@data, 
+                    results.cv, 
+                    intervals.lm[c("LPI.lm", "UPI.lm", "obsInInt.lm")], 
+                    intervals.sm[c("LPI.sm", "UPI.sm", "obsInInt.sm")],
+                    pred.null = lm.depth$fitted.values,
+                    pred.parry
+                    )
 results.df
+#'##I need to do the above again.  Need to chunk this into model types.  
+
 #make tidy data
 results.ty <- gather(results.df, key = key, value = value, pred_LM.1:UPI_SM.10) %>% 
   separate(col = key, into = c("key", "modeltype", "run")) %>% 
