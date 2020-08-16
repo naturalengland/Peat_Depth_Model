@@ -204,29 +204,24 @@ cv <- results.cv %>% summarise(
   bias.sm = mean(btf.pred.sm - btf.obs), 
   interv.sm = mean(intervals.sm$UPI.sm - intervals.sm$LPI.sm)^3
 )
+t(cv)
 ```
-
-
 
 
 ```{r}
+# summarise data and covariate space
 predictors <- raster::stack(parameters$elev_raster_fn, parameters$slope_raster_fn)
 names(predictors) <- c("elevation", "slope")
 
-prdr <- c(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
+prdr.summ <- data.frame(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
             depth_min = as.numeric(NA), depth_max = as.numeric(NA),
             elev_min = minValue(predictors$elevation) %>% round(2), elev_max = maxValue(predictors$elevation) %>% round(2),
             slope_min = minValue(predictors$slope) %>% round(2), slope_max = maxValue(predictors$slope) %>% round(2))
+obs.summ <- sp_depth@data %>% summarise(dataset = "observations extract", n_points = length(depth), depth_med = median(depth), 
+                  depth_min = min(depth), depth_max = max(depth), elev_min = min(elev), elev_max = max(elev),
+                  slope_min = min(slope), slope_max = max(slope))
+rbind(prdr.summ, obs.summ)
 ```
-
-
-
-
-
-
-
-
-
 
 
 ```{r}
