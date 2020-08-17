@@ -84,138 +84,224 @@ library(stars)
 ```
 ## 1. Import previously prepared data
 
-
-## 4. Ten-fold cross validation    
-
-This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross validation
-
 import model and data
 ```{r}
 if(!exists("model.geo")){model.geo <- readRDS(parameters$model_fn)}
 if(!exists("sp_depth")){sp_depth <- readRDS(parameters$inputs_fn)}
 ```
 
+
+```{r}
+#columns which identify the model run
+run_tag <- data.frame(area_abbr = rep(parameters$area_abbr, nrow(sp_depth)), rundate = rep(parameters$rundate, nrow(sp_depth)))
+
+# the data used to generate the model
+dat_sp <- cbind(sp_depth, 
+                parameters$area_abbr, parameters$rundate)
+names(dat_sp) <- c(names(sp_depth), "area_abbr", "rundate")
+dat_sp$id <- seq(1,nrow(sp_depth))
+```
+
+
 ```{r}
 set.seed(4321)
 ```
 
+## 4. Ten-fold cross validation    
+
+This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross validation
 
 
 ```{r}
-sm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = sp_depth, 
+sm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
+                       locations = dat_sp, 
                        model = model.geo, 
                        nfold=10)
-names(sm.cv) <- c("pred.sm", "var.sm", "observed", "resid.sm", "zscore.sm", "fold.sm")
+names(sm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
-```
+#backtransform
+sm.cv.sp$pred.btf <- btf(sm.cv.sp$pred.tf)
+sm.cv.sp$resid.btf <- sm.cv.sp$pred.btf - dat_sp$depth
 
-```{r}
-bubble(sm.cv, "resid.sm", main = "10-fold CV residuals")
-```
-```{r}
-intervals.sm <- sm.cv@data %>% mutate( 
-  LPI.sm = pred.sm - 1.96 * sqrt(var.sm),
-  UPI.sm = pred.sm + 1.96 * sqrt(var.sm),
-  obsInInt = observed < UPI.sm & observed > LPI.sm) %>% 
-  select(pred.sm, var.sm, observed, LPI.sm, UPI.sm, obsInInt)
-```
+#add run data
+sm.cv <- sm.cv.sp@data  %>% 
+  mutate( 
+    id = seq(1,nrow(sp_depth)),
+    LPI = pred.tf - 1.96 * sqrt(var),
+    UPI = pred.tf + 1.96 * sqrt(var),
+    obsInInt = obs.tf < UPI & obs.tf > LPI) %>% 
+  #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
+  bind_cols(run_tag) %>% 
+  mutate(modeltype = "sm")  
 
-```{r}
-sm.cv@data
+#bubble(sm.cv.sp, "resid.btf", main = "10-fold CV residuals")
 ```
-
 ```{r}
-cat(sep = "", "Spatial model cross-validation metrics (not back-transformed):",
+cat(sep = "", "Spatial model cross-validation metrics (not back-transformed, ", parameters$area_abbr, "_", parameters$rundate,
 # mean error, ideally 0:
-"\nmean error = ", mean(sm.cv$resid.sm) %>% round(3), 
+"):\nmean error = ", mean(sm.cv$resid.tf) %>% round(3), 
 # MSPE, ideally small
-", MSPE = ", mean(sm.cv$resid.sm^2) %>% round(3),
+", MSPE = ", mean(sm.cv$resid.tf^2) %>% round(3),
 #Mean square normalized error, ideally close to 1
-", mean square norm. error = ", mean(sm.cv$zscore.sm^2) %>% round(3),
+", mean square norm. error = ", mean(sm.cv$zscore^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(sm.cv$observed, sm.cv$pred.sm) %>% round(3),
+", \ncor obs&pred = ", cor(sm.cv$obs.tf, sm.cv$pred.tf) %>% round(3),
 # correlation predicted and residual, ideally 0
-", cor pred&resid = ", cor(sm.cv$pred.sm, sm.cv$resid.sm) %>% round(3),
+", cor pred&resid = ", cor(sm.cv$pred.tf, sm.cv$resid.tf) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = sm.cv$observed, predicted = sm.cv$pred.sm) %>% round(3),
+", R2 = ", rsq(observed = sm.cv$obs.tf, predicted = sm.cv$pred.tf) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = sm.cv$observed, predicted = sm.cv$pred.sm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = sm.cv$obs.tf, predicted = sm.cv$pred.tf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
+
+```{r}
+cat(sep = "", "Spatial model cross-validation metrics (back-transformed, ", parameters$area_abbr, "_", parameters$rundate,
+# mean error, ideally 0:
+"):\nmean error = ", mean(sm.cv$resid.btf) %>% round(3), 
+# MSPE, ideally small
+", MSPE = ", mean(sm.cv$resid.btf^2) %>% round(3),
+# correlation observed and predicted, ideally 1
+", \ncor obs&pred = ", cor(sp_depth$depth, sm.cv$pred.btf) %>% round(3),
+# correlation predicted and residual, ideally 0
+", cor pred&resid = ", cor(sm.cv$pred.btf, sm.cv$resid.btf) %>% round(3),
+# RSquared
+", R2 = ", rsq(observed = sp_depth$depth, predicted = sm.cv$pred.btf) %>% round(3),
+# Adjusted RSquared
+", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = sm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
+)
+```
+
+
 
 ```{r}
 #linear model cv
-lm.cv <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = sp_depth, 
+lm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
+                       locations = dat_sp, 
                        model = NULL, 
                        nfold=10)
-names(lm.cv) <- c("pred.lm", "var.lm", "observed", "resid.lm", "zscore.lm", "fold.lm")
+names(lm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
-#bubble(lm.cv, "residual", main = "10-fold CV residuals")#
+#backtransform
+lm.cv.sp$pred.btf <- btf(lm.cv.sp$pred.tf)
+lm.cv.sp$resid.btf <- lm.cv.sp$pred.btf - dat_sp$depth
+
+#add run data
+lm.cv <- lm.cv.sp@data  %>% 
+  mutate( 
+    id = seq(1,nrow(sp_depth)),
+    LPI = pred.tf - 1.96 * sqrt(var),
+    UPI = pred.tf + 1.96 * sqrt(var),
+    obsInInt = obs.tf < UPI & obs.tf > LPI) %>% 
+  #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
+  bind_cols(run_tag) %>% 
+  mutate(modeltype = "lm") 
+
+bubble(lm.cv.sp, "resid.btf", main = "10-fold CV residuals")
 ```
 
 
 ```{r}
-cat(sep = "", "Linear model cross-validation metrics (not back-transformed):",
+cat(sep = "", "Linear model cross-validation metrics (not back-transformed, ", parameters$area_abbr, "_", parameters$rundate,
 # mean error, ideally 0:
-"\nmean error = ", mean(lm.cv$resid.lm) %>% round(3), 
-# MSPE, ideally lmall
-", MSPE = ", mean(lm.cv$resid.lm^2) %>% round(3),
+"):\nmean error = ", mean(lm.cv$resid.tf) %>% round(3), 
+# MSPE, ideally small
+", MSPE = ", mean(lm.cv$resid.tf^2) %>% round(3),
 #Mean square normalized error, ideally close to 1
-", mean square norm. error = ", mean(lm.cv$zscore.lm^2) %>% round(3),
+", mean square norm. error = ", mean(lm.cv$zscore^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(lm.cv$observed, lm.cv$pred.lm) %>% round(3),
+", \ncor obs&pred = ", cor(lm.cv$obs.tf, lm.cv$pred.tf) %>% round(3),
 # correlation predicted and residual, ideally 0
-", cor pred&resid = ", cor(lm.cv$pred.lm, lm.cv$resid.lm) %>% round(3),
+", cor pred&resid = ", cor(lm.cv$pred.tf, lm.cv$resid.tf) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = lm.cv$observed, predicted = lm.cv$pred.lm) %>% round(3),
+", R2 = ", rsq(observed = lm.cv$obs.tf, predicted = lm.cv$pred.tf) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = lm.cv$observed, predicted = lm.cv$pred.lm, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = lm.cv$obs.tf, predicted = lm.cv$pred.tf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
+```{r}
+cat(sep = "", "Linear model cross-validation metrics (back-transformed, ", parameters$area_abbr, "_", parameters$rundate,
+# mean error, ideally 0:
+"):\nmean error = ", mean(lm.cv$resid.btf) %>% round(3), 
+# MSPE, ideally small
+", MSPE = ", mean(lm.cv$resid.btf^2) %>% round(3),
+# correlation observed and predicted, ideally 1
+", \ncor obs&pred = ", cor(sp_depth$depth, lm.cv$pred.btf) %>% round(3),
+# correlation predicted and residual, ideally 0
+", cor pred&resid = ", cor(lm.cv$pred.btf, lm.cv$resid.btf) %>% round(3),
+# RSquared
+", R2 = ", rsq(observed = sp_depth$depth, predicted = lm.cv$pred.btf) %>% round(3),
+# Adjusted RSquared
+", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = lm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
+)
+```
+```{r}
+#null model lm
+lm.null <- lm(depth ~ elev + slope, dat_sp)
+summary(lm.null)
 
+  #save predictions
+nullmodel <- data.frame(pred.btf = lm.null$fitted.values, modeltype = as.factor("null"), 
+                        id = seq(1,nrow(dat_sp)),
+                        area_abbr = parameters$area_abbr, rundate = parameters$rundate)
+
+cat(sep = "", "Linear null-model metrics (", parameters$area_abbr, "_", parameters$rundate,
+# mean error, ideally 0:
+"):\nR2 = ", rsq(observed = lm.null$model$depth, predicted = lm.null$fitted.values) %>% round(3),
+      ", R2 adj = ", rsq.adj(observed = lm.null$model$depth, predicted = lm.null$fitted.values,
+                             n.predictors = 2, df.int = 1) %>% round(3),
+      ", RMSE = ", rmse(observed = lm.null$model$depth, predicted = lm.null$fitted.values) %>% round(3), " cm")  
+
+model_equation(model = lm.null)
+```
 
 
 ```{r}
-#calc intervals and backtransform
-intervals.lm <- lm.cv@data %>% mutate(
-  LPI.lm = pred.lm - 1.96 * sqrt(var.lm),
-  UPI.lm = pred.lm + 1.96 * sqrt(var.lm),
-  obsInInt = observed < UPI.lm & observed > LPI.lm) %>% 
-  select(pred.lm, var.lm, observed, LPI.lm, UPI.lm, obsInInt)
-intervals.lm %>% data.frame() %>% colMeans()
-```
+# Parry 1
+#  lpdepth=Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england")-25+(0.5*Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england"))
 
+pred.parry <- exp(0.875 + 0.00758 * dat_sp$elev - 0.0903 * dat_sp$slope) - 25 + (0.5 * exp(0.875 + 0.00758 * dat_sp$elev - 0.0903 * dat_sp$slope))
+
+pred.parry <- data.frame(pred.btf = pred.parry, resid.btf = pred.parry - dat_sp$depth, 
+                         modeltype = as.factor("parry"), id = seq(1,nrow(dat_sp)), 
+                         area_abbr = parameters$area_abbr, rundate = parameters$rundate) 
+
+cat(sep = "", "Exponential model by Parry, metrics (", parameters$area_abbr, "_", parameters$rundate,
+# mean error, ideally 0:
+"):\nR2 = ", rsq(observed = dat_sp$depth, predicted = pred.parry$pred.btf) %>% round(3),
+      ", R2 adj = ", rsq.adj(observed = dat_sp$depth, predicted = pred.parry$pred.btf,
+                             n.predictors = 2, df.int = 1) %>% round(3),
+      ", RMSE = ", rmse(observed = dat_sp$depth, predicted = pred.parry$pred.btf) %>% round(3), " cm")
+
+```
 
 ```{r}
 #merge cv datasets and backtransform
-results.cv <- cbind(sm = sm.cv, lm = lm.cv)
-results.cv <- results.cv@data %>% mutate(
-  btf.obs = observed^3, 
-  btf.pred.sm = pred.sm^3, 
-  btf.pred.lm = results.cv$pred.lm^3)
+results.cv <- bind_rows(sm.cv, lm.cv, nullmodel, pred.parry) %>% 
+  full_join(dat_sp@data, by = c("id", "area_abbr", "rundate")) %>% 
+  mutate_if(is.character, as.factor) %>% 
+  select(id, area_abbr, rundate, depth:cbrt_depth, everything())
+# summary(results.cv)
+# table(results.cv$modeltype)
 ```
+## 5. Summarise the results  
 
 
 ```{r}
-# summarise backtransformed cross-validation results
-cv <- results.cv %>% summarise(
-  rmse.lm = rmse(observed = btf.obs, predicted = btf.pred.lm) %>% round(3), 
-  r2.lm = rsq(observed = btf.obs, predicted = btf.pred.lm) %>% round(3),
-  r2adj.lm = rsq.adj(observed = btf.obs, predicted = btf.pred.lm, n.predictors = 3, df.int = 1) %>% round(3),
-  coverage.lm = mean(intervals.lm$obsInInt), 
-  bias.lm = mean(btf.pred.lm - btf.obs), 
-  interv.lm = mean(intervals.lm$UPI.lm - intervals.lm$LPI.lm)^3, 
-  rmse.sm = rmse(observed = btf.obs, predicted = btf.pred.sm) %>% round(3), 
-  r2.sm = rsq(observed = btf.obs, predicted = btf.pred.sm) %>% round(3),
-  r2adj.sm =  rsq.adj(observed = btf.obs, predicted = btf.pred.sm, n.predictors = 3, df.int = 1) %>% round(3),
-  coverage.sm = mean(intervals.sm$obsInInt), 
-  bias.sm = mean(btf.pred.sm - btf.obs), 
-  interv.sm = mean(intervals.sm$UPI.sm - intervals.sm$LPI.sm)^3
-)
-t(cv)
+# summarise backtransformed model metrics
+table.metrics <- results.cv %>% 
+  group_by(area_abbr, rundate, modeltype) %>% 
+  summarise(
+    rmse = rmse(observed = depth, predicted = pred.btf) %>% round(3), 
+    r2 = rsq(observed = depth, predicted = pred.btf) %>% round(3),
+    r2adj = rsq.adj(observed = depth, predicted = pred.btf, n.predictors = 3, df.int = 1) %>% round(3),
+    cc = cor(depth, pred.btf),
+    coverage = mean(obsInInt), 
+    bias = mean(pred.btf - depth), 
+    interv = btf(mean(UPI - LPI))
+    )
+table.metrics
 ```
 
 
@@ -228,186 +314,36 @@ prdr.summ <- data.frame(dataset = "predictors", n_points = ncell(predictors), de
             depth_min = as.numeric(NA), depth_max = as.numeric(NA),
             elev_min = minValue(predictors$elevation) %>% round(2), elev_max = maxValue(predictors$elevation) %>% round(2),
             slope_min = minValue(predictors$slope) %>% round(2), slope_max = maxValue(predictors$slope) %>% round(2))
-obs.summ <- sp_depth@data %>% summarise(dataset = "observations extract", n_points = length(depth), depth_med = median(depth), 
+obs.summ <- dat_sp@data %>% summarise(dataset = "observations extract", n_points = length(depth), depth_med = median(depth), 
                   depth_min = min(depth), depth_max = max(depth), elev_min = min(elev), elev_max = max(elev),
                   slope_min = min(slope), slope_max = max(slope))
-rbind(prdr.summ, obs.summ)
 ```
 
 
-```{r}
-#calc RMSE and backtf
-rmse.cv.btf <- sqrt(mean(((results.cv$var1.pred^3) - (results.cv$observed^3))^2))
-rmse.cv.btf
-```
 
-```{r}
-#backtf and calc rsq
-
-#rsquared
-rsq(observed = results.cv$observed^3, predicted = results.cv$var1.pred^3)
-
-#adj r squared
-rsq.adj(observed = results.cv$observed^3, predicted = results.cv$var1.pred^3, n.predictors = 2, df.int = 1)
-
-```
-```{r}
-pred <- results.cv$var1.pred^3
-obs <- results.cv$observed^3
-
-paste0("R2 = ", rsq(observed = obs, predicted = pred) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = obs, predicted = pred,
-                             n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = obs, predicted = pred) %>% round(3), " cm")
-```
-
-
-```{r}
-#null model lm
-lm.depth <- lm(depth ~ elev + slope, sp_depth)
-summary(lm.depth)
-
-pred.lm <- lm.depth$fitted.values
-obs.lm <- lm.depth$model$depth
-
-paste0("R2 = ", rsq(observed = obs.lm, predicted = pred.lm) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = obs.lm, predicted = pred.lm,
-                             n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = obs.lm, predicted = pred.lm) %>% round(3), " cm")
-
-model_equation(model = lm.depth)
-```
-
-
-```{r}
-# Parry 1
-#  lpdepth=Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england")-25+(0.5*Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england"))
-
-pred.parry <- exp(0.875 + 0.00758 * sp_depth$elev - 0.0903 * sp_depth$slope) - 25 + (0.5 * exp(0.875 + 0.00758 * sp_depth$elev - 0.0903 * sp_depth$slope))
-
-
-paste0("R2 = ", rsq(observed = sp_depth$depth, predicted = pred.parry) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = pred.parry,
-                             n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = sp_depth$depth, predicted = pred.parry) %>% round(3), " cm")
-
-```
-
-
-#### Write predictions to dataframe
-need to also bind backtransformed results into this
-```{r}
-#combine original data and predictions
-results.df <- cbind(id = seq(1:nrow(dat)), dat, data.frame(results))
-results.df
-#make tidy data
-results.ty <- gather(results.df, key = key, value = value, pred_LM.1:UPI_SM.10) %>% 
-  separate(col = key, into = c("key", "modeltype", "run")) %>% 
-  spread(key = key, value = value)
-results.ty
-
-```
-
-```{r}
-str(results)
-class(results)
-results[101,,]
-results[101,2,]
-```
-
-
-------------------------------------------------------------------------------
-
-## 5. Summarise the results  
-
-### Compute metrics of interest  
-
-```{r}
-#### Bias  
-# - measures whether the predictions are too large or too small on average
-# - want to be as close to zero as possible but due to random variation will not be exactly zero.
-# - mean of prediction minus observation
-
-# Linear model
-bias.lm <- mean(results.btf[,1, ] - matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                            byrow=FALSE))
-# Spatial model
-bias.sm <- mean(results.btf[,4, ] - matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                          byrow=FALSE), na.rm = T) #bodge to deal with NAs
-
-#### RMSE  
-# - measures average difference between the true and predicted values ignoring sign. 
-# - want to be as small as possible  
-
-# Linear model
-rmse.lm <- sqrt(mean((results.btf[,1, ] - matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                                  byrow=FALSE))^2)) 
-
-###getting NAs here
-# Spatial model
-rmse.sm <- sqrt(mean((results.btf[,4, ] - matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                                  byrow=FALSE))^2, na.rm = T))  #bodge to deal with NaNs
-
-
-#### Coverage 
-# - measures the probability that the 95% prediction intervals contain the true value 
-# - want to be 0.95
-
-# Linear model
-coverage.lm <- mean(matrix(rep(dat$depth,10), nrow=n, ncol=10, byrow=FALSE) >
-     results.btf[ ,2, ] & matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                             byrow=FALSE) < results.btf[ ,3, ])
-# Spatial model
-coverage.sm <- mean(matrix(rep(dat$depth,10), nrow=n, ncol=10, byrow=FALSE) >
-     results.btf[ ,5, ] & matrix(rep(dat$depth,10), nrow=n, ncol=10,
-                             byrow=FALSE) < results.btf[ ,6, ], na.rm = T) #bodge to deal with NAs
-
-#### Interval width   
-# - the width of the 95% prediction intervals
-# - want to be as small as possible provided that the coverage above is around 0.95. If the coverage is much lower than 0.95 then this is meaningless.
-
-# Linear model
-interv.lm <- mean(results.btf[ ,3, ] - results.btf[ ,2, ])
-# Spatial model
-interv.sm <- mean(results.btf[ ,6, ] - results.btf[ ,5, ], na.rm = T) #bodge to deal with NAs
-
-
-table.metrics <- data.frame(rbind(
-  LM = c(bias = bias.lm, RMSE = rmse.lm, coverage = coverage.lm, interval_width = interv.lm), 
-  SM = c(bias = bias.sm, RMSE = rmse.sm, coverage = coverage.sm, inverval_width = interv.sm)))
-
-table.metrics
-```
 
 ### visualise predictions
 
 ```{r}
-graphdata <- results.ty %>% #filter(modeltype == "LM") %>% 
-  mutate(pred_backtr = pred^2) %>% 
-  group_by(modeltype, id) %>% 
-  summarise(sqrt_depth = mean(sqrt_depth),
-            sqrt_pred = mean(pred),
-            depth = mean(depth),
-            pred_backtr = mean(pred_backtr)) #calculate mean result for each point
-
-graphmetrics <- graphdata %>% 
-  group_by(modeltype) %>% 
-  summarise(RMSE =      sqrt(mean((depth -      pred_backtr)^2)),
-            RMSE_sqrt = sqrt(mean((sqrt_depth - sqrt_pred)^2)),
-            cc = cor(depth, (pred_backtr)))
+#results.ty <- results.cv
+```
 
 
 
-ggplot(graphdata, aes(x = depth, y = pred_backtr)) +
+```{r}
+#graph predicted v observed values
+ggplot(results.cv, aes(x = depth, y = pred.btf)) +
   geom_point(aes(colour = modeltype, shape = modeltype), position = position_dodge(width = 2))+
   geom_abline(slope = 1) +
   coord_equal() +
-  geom_text(data = graphmetrics, 
-            aes(x = 50, y = c(140,160), colour = modeltype,
-                label = paste("RMSE =", round(RMSE, 2),
-                              "cm (backtransf.) \nCC =", round(cc, 2))),
-            size = 3, show.legend = F) +
-  labs(title = paste("Predicted v observed values \n", rundate))
+  geom_text(data = table.metrics %>% arrange(cc), 
+            aes(x = 0, y = seq(max(graphdata$pred.btf), by = 50, length.out = length(unique(modeltype))), 
+                colour = modeltype,
+                label = paste0(modeltype, ": RMSE =", round(rmse, 2),
+                              "cm, cc = ", round(cc, 2))),
+            size = 3, show.legend = F, hjust = "left") +
+  labs(title = "Predicted v observed values", subtitle = paste(parameters$area_abbr, parameters$rundate)) + 
+  theme_minimal(base_size = 10)
 
   
 ggsave(filename = paste0("../outputs/predvobs__", 
@@ -416,32 +352,13 @@ ggsave(filename = paste0("../outputs/predvobs__",
 ```
 
 
-```{r}
-class(model.geo)
-summary(model.geo)
-
-```
-
 ------------------------------------------------------------------------------  
 ## 5.5 Summary outputs
 
 ### Table 1. Summary statistics for input and prediction data
 
 ```{r}
-rbind(
-dat %>% summarise(dataset = "observations extract",
-                  n_points = length(depth), depth_med = median(depth), 
-                  depth_min = min(depth), depth_max = max(depth),
-                  elev_min = min(elev), elev_max = max(elev),
-                  slope_min = min(slope), slope_max = max(slope))
-,
-
-c(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
-            depth_min = as.numeric(NA), depth_max = as.numeric(NA),
-            elev_min = minValue(predictors$elevation), elev_max = maxValue(predictors$elevation),
-            slope_min = minValue(predictors$slope), slope_max = maxValue(predictors$slope))
-)
-
+rbind(prdr.summ, obs.summ)
 ```
 
 
@@ -452,6 +369,7 @@ c(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(N
 ```{r}
 table.metrics
 ```
+#>>>>>>>>>>>>>> got this far
 
 ### Table xx. combined metrics for each model run
 
