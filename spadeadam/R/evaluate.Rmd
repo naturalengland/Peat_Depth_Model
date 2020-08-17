@@ -23,6 +23,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo= TRUE)
 source("rsquared_funs.R")
+source("backtransform.R")
 ```
 
 -------  
@@ -37,6 +38,8 @@ parameters <- readRDS(file = params$params_fn)
   #parameters$existing_parameter <- newvalue
   #parameters$new_parameter <- value
 
+parameters$tf <- "cbrt"
+
 # add new parameters from yaml header
 
 parameters <- c(parameters, params)
@@ -49,6 +52,13 @@ par.ori <- par() #save default plotting parameters
 
 
 ```
+```{r}
+#pre-set which back-transformation to use
+
+btf <- function(x) {
+  backtransform(x = x, tf = parameters$tf)
+}
+```
 
 
 -------    
@@ -57,6 +67,7 @@ par.ori <- par() #save default plotting parameters
 
 This script evaluates a model using ten-fold cross validation and produces evaluation metrics.  
 
+*  the suffix `.tf` means "transformed" and `.btf` means "back-transformed"
 
 
 ```{r}
