@@ -1,5 +1,5 @@
 ---
-title: "Peat Depth Model: Evaluate"
+title: "Peat Depth Model: Model Evaluation"
 params:
   params_fn: 
     input: file
@@ -14,21 +14,30 @@ params:
     label: 'Select input data to import (.rds)'
     value: "../outputs/input.data.gs_spade_run_20200806-1612.rds"
 output:
-    html_notebook:
     html_document:
+    html_notebook:
     df_print: paged
-
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo= TRUE)
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
 source("rsquared_funs.R")
 source("backtransform.R")
 ```
 
 -------  
 
-Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+```{r}
+## Introduction
+#This script evaluates a model using ten-fold cross validation and produces evaluation metrics.  
+# *  the suffix `.tf` means "transformed" and `.btf` means "back-transformed"
+```
+
+
 
 ```{r, echo=FALSE}
 #import parameters from previous runs
@@ -38,20 +47,18 @@ parameters <- readRDS(file = params$params_fn)
   #parameters$existing_parameter <- newvalue
   #parameters$new_parameter <- value
 
-parameters$tf <- "cbrt"
+parameters$tf <- "cbrt" #set which transformation was applied to the data in the model
 
 # add new parameters from yaml header
 
 parameters <- c(parameters, params)
 
-# print list of all parameters
-parameters
-  
 #store graphics params in case things go wrong
 par.ori <- par() #save default plotting parameters
 
-
+set.seed(4321)
 ```
+
 ```{r}
 #pre-set which back-transformation to use
 
@@ -60,14 +67,12 @@ btf <- function(x) {
 }
 ```
 
+area|run
+----|----
+*`r paste0(parameters$area_name, " (", parameters$area_abbr, ")")`* | *`r parameters$rundate`*
 
 -------    
 
-## Introduction
-
-This script evaluates a model using ten-fold cross validation and produces evaluation metrics.  
-
-*  the suffix `.tf` means "transformed" and `.btf` means "back-transformed"
 
 
 ```{r}
@@ -81,17 +86,19 @@ library(elevatr)
 library(geoR)
 library(gstat)
 library(stars)
+library(flextable)
 ```
-## 1. Import previously prepared data
 
-import model and data
+### Import model and data
 ```{r}
+#import model and data
+
 if(!exists("model.geo")){model.geo <- readRDS(parameters$model_fn)}
 if(!exists("sp_depth")){sp_depth <- readRDS(parameters$inputs_fn)}
-```
 
+predictors <- raster::stack(parameters$elev_raster_fn, parameters$slope_raster_fn)
+names(predictors) <- c("elevation", "slope")
 
-```{r}
 #columns which identify the model run
 run_tag <- data.frame(area_abbr = rep(parameters$area_abbr, nrow(sp_depth)), rundate = rep(parameters$rundate, nrow(sp_depth)))
 
@@ -100,23 +107,51 @@ dat_sp <- cbind(sp_depth,
                 parameters$area_abbr, parameters$rundate)
 names(dat_sp) <- c(names(sp_depth), "area_abbr", "rundate")
 dat_sp$id <- seq(1,nrow(sp_depth))
+
+# summarise data and covariate space
+prdr.summ <- data.frame(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
+            depth_min = as.numeric(NA), depth_max = as.numeric(NA),
+            elev_min = minValue(predictors$elevation) %>% round(2), elev_max = maxValue(predictors$elevation) %>% round(2),
+            slope_min = minValue(predictors$slope) %>% round(2), slope_max = maxValue(predictors$slope) %>% round(2))
+obs.summ <- dat_sp@data %>% summarise(dataset = "observations extract", n_points = length(depth), depth_med = median(depth), 
+                  depth_min = min(depth), depth_max = max(depth), elev_min = min(elev), elev_max = max(elev),
+                  slope_min = min(slope), slope_max = max(slope))
+
+inputs_summary <- rbind(prdr.summ, obs.summ) %>% data.frame() %>% 
+  mutate_at(vars(elev_min:slope_max), funs(round, .args = list("digits" = 2)))
 ```
 
 
-```{r}
-set.seed(4321)
+Model specification  
+
+```{r, ft.align="left"}
+flextable(
+  data.frame(model_name = paste0(parameters$area_abbr, "_", parameters$rundate), model.geo[1:3])) %>% 
+  set_caption(caption = "Table 1a. Model Specification") %>% 
+  autofit() 
 ```
 
-## 4. Ten-fold cross validation    
+Input and predictor summary  
+
+
+```{r, ft.align="left"}
+flextable(inputs_summary) %>% set_caption(caption = "Table 1b. Summary statistics for input and prediction data") %>% 
+  add_footer_lines(paste(parameters$area_name, parameters$rundate)) %>% 
+  autofit()
+```
+
+
+### Ten-fold cross validation    
 
 This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross validation
 
 
+#### Cross validation of spatial model
+
 ```{r}
 sm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = dat_sp, 
-                       model = model.geo, 
-                       nfold=10)
+                       locations = dat_sp, model = model.geo, 
+                       nfold=10, verbose = FALSE)
 names(sm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
 #backtransform
@@ -133,9 +168,10 @@ sm.cv <- sm.cv.sp@data  %>%
   #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
   bind_cols(run_tag) %>% 
   mutate(modeltype = "sm")  
-
-#bubble(sm.cv.sp, "resid.btf", main = "10-fold CV residuals")
 ```
+
+
+
 ```{r}
 cat(sep = "", "Spatial model cross-validation metrics (not back-transformed, ", parameters$area_abbr, "_", parameters$rundate,
 # mean error, ideally 0:
@@ -171,15 +207,17 @@ cat(sep = "", "Spatial model cross-validation metrics (back-transformed, ", para
 ", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = sm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
-
+```{r}
+bubble(sm.cv.sp, "resid.btf", main = "10-fold CV residuals: spatial model")
+```
+#### Cross validation of linear model
 
 
 ```{r}
 #linear model cv
 lm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = dat_sp, 
-                       model = NULL, 
-                       nfold=10)
+                       locations = dat_sp, model = NULL, 
+                       nfold=10, verbose = FALSE)
 names(lm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
 #backtransform
@@ -196,8 +234,6 @@ lm.cv <- lm.cv.sp@data  %>%
   #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
   bind_cols(run_tag) %>% 
   mutate(modeltype = "lm") 
-
-bubble(lm.cv.sp, "resid.btf", main = "10-fold CV residuals")
 ```
 
 
@@ -236,6 +272,15 @@ cat(sep = "", "Linear model cross-validation metrics (back-transformed, ", param
 ", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = lm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
+
+```{r}
+bubble(lm.cv.sp, "resid.btf", main = "10-fold CV residuals: linear model")
+```
+
+#### Estimate null model  
+
+Linear regression with no spatial component
+
 ```{r}
 #null model lm
 lm.null <- lm(depth ~ elev + slope, dat_sp)
@@ -253,9 +298,9 @@ cat(sep = "", "Linear null-model metrics (", parameters$area_abbr, "_", paramete
                              n.predictors = 2, df.int = 1) %>% round(3),
       ", RMSE = ", rmse(observed = lm.null$model$depth, predicted = lm.null$fitted.values) %>% round(3), " cm")  
 
-model_equation(model = lm.null)
+cat("\n\nModel equation\n", model_equation(model = lm.null))
 ```
-
+#### Estimate best linear model from the literature 
 
 ```{r}
 # Parry 1
@@ -274,6 +319,7 @@ cat(sep = "", "Exponential model by Parry, metrics (", parameters$area_abbr, "_"
                              n.predictors = 2, df.int = 1) %>% round(3),
       ", RMSE = ", rmse(observed = dat_sp$depth, predicted = pred.parry$pred.btf) %>% round(3), " cm")
 
+cat("\n\nModel equation\nexp(0.875 + 0.00758 * elev - 0.0903 * slope) - 25 + (0.5 * exp(0.875 + 0.00758 * elev - 0.0903 * slope))")
 ```
 
 ```{r}
@@ -281,14 +327,14 @@ cat(sep = "", "Exponential model by Parry, metrics (", parameters$area_abbr, "_"
 results.cv <- bind_rows(sm.cv, lm.cv, nullmodel, pred.parry) %>% 
   full_join(dat_sp@data, by = c("id", "area_abbr", "rundate")) %>% 
   mutate_if(is.character, as.factor) %>% 
-  select(id, area_abbr, rundate, depth:cbrt_depth, everything())
+  dplyr::select(id, area_abbr, rundate, depth:cbrt_depth, everything())
 # summary(results.cv)
 # table(results.cv$modeltype)
 ```
-## 5. Summarise the results  
+### Results summary  
 
 
-```{r}
+```{r, ft.align="left"}
 # summarise backtransformed model metrics
 table.metrics <- results.cv %>% 
   group_by(area_abbr, rundate, modeltype) %>% 
@@ -299,45 +345,31 @@ table.metrics <- results.cv %>%
     cc = cor(depth, pred.btf),
     coverage = mean(obsInInt), 
     bias = mean(pred.btf - depth), 
-    interv = btf(mean(UPI - LPI))
-    )
-table.metrics
+    interv = btf(mean(UPI - LPI))) %>% 
+  mutate(modeltype = fct_relevel(modeltype, c("sm", "lm", "null", "parry"))) %>%
+  arrange(modeltype) %>% 
+  mutate_at(vars(rmse, cc, coverage, bias, interv), funs(round, .args = list("digits" = 2))) %>% 
+  ungroup()
+  
+
+flextable(table.metrics %>% dplyr::select(modeltype:interv)) %>% 
+  set_caption(caption = "Table 2. Performance metrics for spatial and linear models") %>% 
+  add_footer_lines(paste(parameters$area_name, parameters$rundate)) %>% 
+  autofit()
 ```
 
 
-```{r}
-# summarise data and covariate space
-predictors <- raster::stack(parameters$elev_raster_fn, parameters$slope_raster_fn)
-names(predictors) <- c("elevation", "slope")
-
-prdr.summ <- data.frame(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
-            depth_min = as.numeric(NA), depth_max = as.numeric(NA),
-            elev_min = minValue(predictors$elevation) %>% round(2), elev_max = maxValue(predictors$elevation) %>% round(2),
-            slope_min = minValue(predictors$slope) %>% round(2), slope_max = maxValue(predictors$slope) %>% round(2))
-obs.summ <- dat_sp@data %>% summarise(dataset = "observations extract", n_points = length(depth), depth_med = median(depth), 
-                  depth_min = min(depth), depth_max = max(depth), elev_min = min(elev), elev_max = max(elev),
-                  slope_min = min(slope), slope_max = max(slope))
-```
+                 
 
 
-
-
-### visualise predictions
-
-```{r}
-#results.ty <- results.cv
-```
-
-
-
-```{r}
+```{r message=FALSE, warning=FALSE, fig.align="left"}
 #graph predicted v observed values
 ggplot(results.cv, aes(x = depth, y = pred.btf)) +
   geom_point(aes(colour = modeltype, shape = modeltype), position = position_dodge(width = 2))+
   geom_abline(slope = 1) +
   coord_equal() +
   geom_text(data = table.metrics %>% arrange(cc), 
-            aes(x = 0, y = seq(max(graphdata$pred.btf), by = 50, length.out = length(unique(modeltype))), 
+            aes(x = 0, y = seq(max(results.cv$pred.btf), by = 50, length.out = length(unique(modeltype))), 
                 colour = modeltype,
                 label = paste0(modeltype, ": RMSE =", round(rmse, 2),
                               "cm, cc = ", round(cc, 2))),
@@ -348,136 +380,28 @@ ggplot(results.cv, aes(x = depth, y = pred.btf)) +
   
 ggsave(filename = paste0("../outputs/predvobs__", 
                          parameters$area_abbr, "_",
-                         rundate, ".png"))
+                         parameters$rundate, ".png"))
 ```
-
-
-------------------------------------------------------------------------------  
-## 5.5 Summary outputs
-
-### Table 1. Summary statistics for input and prediction data
-
-```{r}
-rbind(prdr.summ, obs.summ)
-```
-
-
-
-### Table 2. Performance metrics for spatial and linear models from 10-fold cross-validation simulations
-
-
-```{r}
-table.metrics
-```
-#>>>>>>>>>>>>>> got this far
-
-### Table xx. combined metrics for each model run
-
-```{r}
-#compile metrics
-metrics.combined <- data.frame(
-  run = rundate,
-  dat = dat %>% summarise(n_points = length(depth), depth_med = median(depth), 
-                          depth_min = min(depth), depth_max = max(depth),
-                          elev_min = min(elev), elev_max = max(elev),
-                          slope_min = min(slope), slope_max = max(slope)), 
-  cv = data.frame(bias.lm, rmse.lm, coverage.lm, interv.lm, bias.sm, rmse.sm, coverage.sm, interv.sm),
-  prdr = data.frame(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
-            depth_min = as.numeric(NA), depth_max = as.numeric(NA),
-            elev_min = minValue(predictors$elevation), elev_max = maxValue(predictors$elevation),
-            slope_min = minValue(predictors$slope), slope_max = maxValue(predictors$slope)),
-  mod = data.frame(model.geo[c(1, 2, 4, 5, 6)],
-                   intercept = model.geo$beta[[1]],
-                   covar1 = model.geo$beta[[2]],
-                   covar2 = model.geo$beta[[3]], 
-                   model.geo[c(11, 12, 15, 17, 18)])
-)
-
-
-#make tidy
-metrics.combined <- metrics.combined %>% mutate_all(as.character) %>% gather(key = metric, value = value, -run); metrics.combined 
-#add to csv record
-ifelse(file.exists("../outputs/metrics_combined.csv"), 
-       yes = write_csv(metrics.combined, "../outputs/metrics_combined.csv", col_names = F, append = T), 
-       no = write_csv(metrics.combined, "../outputs/metrics_combined.csv", col_names = T, append = F))
-```
-
-
-
-
-------------------------------------------------------------------------------  
-
-## 6. Do some plots
-
-##Variograms
-
-#### Plot the semi-variogram to test for the presence of spatial autocorrelation
-
-```{r}
-residuals <- residuals(mod.lm.test)
-resid.sp <- as.geodata(obj=dat.fit, coords.col=c("x", "y"), data.col="sqrt_depth", covar.col = c("elev", "slope"))
-resid.sp <- jitterDupCoords(resid.sp, max=0.01)
-vari1 <- variog(resid.sp)
-vari1.mc <- variog.mc.env(resid.sp, obj.variog=vari1)
-
-plot(vari1, envelope.obj = vari1.mc, xlab="Distance (m)",
-     ylab="Estimated semi-variogram", main = "Spatial autocorrelation of residuals")
-```
-
-#### Empirical variograms
-Empirical variograms are calculated using the function variog. There are options for the classical or modulus estimator. Results can be returned as variogram clouds, binned or smoothed variograms.
-
-```{r}
-plot(variog(input.data.gd))
-```
-
-
-
-```{r}
-max_dist <- 400
-cloud1 <- variog(input.data.gd, option = "cloud")#, max.dist = max_dist)
-cloud2 <- variog(input.data.gd, option = "cloud", estimator.type = "modulus")#, max.dist = max_dist)
-bin1 <- variog(input.data.gd)#, uvec=seq(0, max_dist, l=11))
-bin2  <- variog(input.data.gd, estimator.type= "modulus")#, uvec=seq(0, max_dist, l=11))
-
-par(mfrow=c(2,2), pch = 1)
-plot(cloud1, main = "cloud: classical estimator")
-plot(cloud2, main = "cloud: modulus estimator")
-plot(bin1, main = "binned: classical estimator")
-plot(bin2, main = "binned: modulus estimator")
-#par(par.ori)
-```
-	  
-
-
-##Compare model outputs
-
-```{r}
-#read in metrics from csv
-model_metrics <- read_csv("../outputs/metrics_combined.csv")
-```
-
-
-```{r}
-model_metrics_w <- model_metrics %>% spread(key = metric, value = value)
-model_metrics_w
-```
-
-```{r}
-ggplot(model_metrics_w, aes(x = cv.rmse.sm, y = cv.rmse.lm)) +
-  geom_point(aes(colour = run)) +
-  coord_equal() +
-  expand_limits(x = 0, y = 0)
-
-
-ggplot(model_metrics_w, aes(x = dat.n_points, y = cv.rmse.sm)) +
-  geom_point(aes(colour = run))
-
-```
-
 
 ```{r}
 # export parameters
 saveRDS(parameters,  paste0("../data/parameters_", 
                                       parameters$area_abbr, ".rds"))
 ```
+
+---------------
+
+### Parameters and environment
+
+Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+
+```{r, echo=FALSE}
+# print list of all parameters
+parameters
+```
+```{r}
+sessionInfo()
+```
+
+
+
