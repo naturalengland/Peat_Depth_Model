@@ -35,6 +35,9 @@ source("backtransform.R")
 ## Introduction
 #This script evaluates a model using ten-fold cross validation and produces evaluation metrics.  
 # *  the suffix `.tf` means "transformed" and `.btf` means "back-transformed"
+
+# When you're happy with the document, run the following command in the command line: 
+#  rmarkdown::render(input = "../R/evaluate.Rmd", output_file = paste0("../outputs/eval_", parameters$area_abbr, "_", parameters$rundate))
 ```
 
 
