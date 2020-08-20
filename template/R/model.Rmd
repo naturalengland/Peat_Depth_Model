@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters.rds"
+    value: "../data/parameters_spade.rds"
 output:
     html_notebook:
     html_document:
@@ -71,7 +71,18 @@ library(stars)
 ```{r}
 # import input.data
 input.data.sp <- readRDS(parameters$input_data.sp.fn)
+
+# create further transformations (sqrt already done)
+input.data.sp$log_depth <- log(input.data.sp$depth + 1)
+input.data.sp$cbrt_depth <- input.data.sp$depth^(1/3)
+
+
 input.data <- input.data.sp %>% as_tibble()
+```
+
+
+```{r}
+# import predictors
 
 # # import elevation and slope
 # elevation <- raster(parameters$elev_raster_fn)
@@ -196,7 +207,6 @@ not great
 
 Using log of peat depth:...
 ```{r}
-dat$log_depth <- log(dat$depth + 1)
 
 mod.lm.test <- lm(log_depth ~ elev + slope, data=dat)
 summary(mod.lm.test)
@@ -225,7 +235,7 @@ dat$resid <- resid
 
 Using cube root of peat depth:...
 ```{r}
-mod.lm.test <- lm(((depth)^(1/3)) ~ elev + slope, data=dat)
+mod.lm.test <- lm(cbrt_depth ~ elev + slope, data=dat)
 summary(mod.lm.test)
 
 resid <- residuals(mod.lm.test)
@@ -236,9 +246,7 @@ dat$resid <- resid
 ```
 I kinda like the cube root.  Lets do it: 
 
-```{r}
-input.data.gs$cbrt_depth <- input.data.gs$depth^(1/3)
-```
+
 
 
 
@@ -317,15 +325,13 @@ plot(sp_depth.v, model = model.geo.mat, col = "green", main = "Matern")
 plot(sp_depth.v, model = model.geo.auto1, col = "black", main = paste(model.geo.auto1$model[2]))
 plot(sp_depth.v, model = model.geo.auto2, col = "black", main = paste(model.geo.auto2$model[2]))
 ```
-
+Exponential seems like best fit.  
 
 ```{r}
 #chosen model
-model.geo <- model.geo.auto2
+model.geo <- model.geo.exp
 summary(model.geo)
-write_rds(model.geo, path = paste0("../outputs/model.geo__", 
-                                   parameters$area_abbr, "_", 
-                                   rundate, ".rds"))
+
 ```
 
 
@@ -340,6 +346,14 @@ plot(sp_depth.v, model = model.geo, main = rundate)
 ```
 
 ```{r}
+#export objects
+write_rds(model.geo, path = paste0("../outputs/model.geo_", 
+                                   parameters$area_abbr, "_", 
+                                   rundate, ".rds"))
+write_rds(input.data.gs, path = paste0("../outputs/input.data.gs_", 
+                                   parameters$area_abbr, "_", 
+                                   rundate, ".rds"))
+
 # export parameters
 saveRDS(parameters,  paste0("../data/parameters_", 
                                       parameters$area_abbr, ".rds"))
