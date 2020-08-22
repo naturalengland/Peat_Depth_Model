@@ -4,15 +4,15 @@ params:
   area_name: 
     input: text
     label: 'Long name of area to be modelled'
-    value: Dartmoor National Park
+    value: Spadeadam
   area_abbr:
     input: text
     label: 'Abbreviation of the area to be modelled to label outputs'
-    value: dart
+    value: spade
   pred_bound: 
     input: file
     label: 'Prediction boundary: select shapefile (leave as-is if selecting NP)'
-    value: "National Park"
+    value: ../data/site_box.shp
   NP: 
     input: select
     label: 'Prediction boundary: select National Park if applicable'
@@ -34,7 +34,7 @@ params:
   obs_path:
     input: file
     label: 'Observations data (shapefile):'
-    value: ..\data\dartmoor_points_young.shp
+    value: ../data/peatdepths-spade-LM-20180412.shp
   projection:
     input: text
     label: 'Enter projection proj4 string (lookup at https://spatialreference.org, default is BNG):'
@@ -42,7 +42,7 @@ params:
   field_depth:
     input: text
     label: "peat depth field:"
-    value: "depth"
+    value: "Peat.depth"
 
 output:
     html_notebook:
@@ -115,7 +115,7 @@ site_bound <- spTransform(site_bound, CRSobj = parameters$projection)
 saveRDS(site_bound, "../data/site_bound.rds")
 
 #clean up
-rm(NP_boundaries)
+if(exists("NP_boundaries")){rm(NP_boundaries)}
 plot(site_bound)
 ```
 
@@ -162,7 +162,7 @@ elevation <- resample(x = elevation_orig, y = empty_raster)
 rm(elevation_orig, empty_raster)
 
 #create filenames and save to parameters
-parameters$elev_raster_fn <- paste0("data/elev_", 
+parameters$elev_raster_fn <- paste0("../data/elev_", 
                                     parameters$area_abbr, "_", 
                                     parameters$cell_size, "m.tif")
 
@@ -208,7 +208,7 @@ data.sp <- sp::SpatialPointsDataFrame(data = data, coords = coords, proj4string 
 ```{r}
 #create dataframe with peat depth as first col
 input.data <- data.frame(peat_depth = data[parameters$field_depth])
-
+names(input.data) <- "depth"
 # transform peat depth data
 input.data$sqrt_depth <- sqrt(input.data$depth)
 
@@ -251,6 +251,7 @@ saveRDS(input.data.sp, parameters$input_data.sp.fn)
 # export parameters
 saveRDS(parameters,  paste0("../data/parameters_", 
                                       parameters$area_abbr, ".rds"))
+parameters
 ```
 
 

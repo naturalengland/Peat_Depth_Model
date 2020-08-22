@@ -2,7 +2,6 @@
 
 rsq <- function(observed, predicted) {
   stats::cor(observed, predicted)^2
-  
 }
 
 rsq.adj <- function(observed, predicted, n.predictors, df.int = 0) {
@@ -11,7 +10,7 @@ rsq.adj <- function(observed, predicted, n.predictors, df.int = 0) {
   #df.int is 1 if there is an intercept, 0 if not, rdf is residual degrees of freedom
   adj.r.squared <- 1 - 
     (1 - r.squared) * ((length(observed) - df.int)/(length(observed)-n.predictors-1))
-  print(adj.r.squared)
+  return(adj.r.squared)
 }
 
 rmse <- function(observed, predicted) {
