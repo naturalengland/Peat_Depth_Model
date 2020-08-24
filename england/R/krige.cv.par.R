@@ -1,0 +1,44 @@
+# parallel krige.cv
+
+
+if (!isGeneric("krige.cv"))
+  setGeneric("krige.cv", function(formula, locations, ...)
+    standardGeneric("krige.cv"))
+
+krige.cv.locations = function (formula, locations, data = sys.frame(sys.frame(sys.parent())), 
+                               model = NULL, ..., beta = NULL, nmax = Inf, nmin = 0, maxdist = Inf, 
+                               nfold = nrow(data), verbose = interactive(), debug.level = 0) {
+  
+  gstat.cv.par(gstat(g = NULL, id = "var1", formula = formula, locations = 
+                   locations, data = data, model = model, beta = beta, nmax = nmax, 
+                 nmin = nmin, maxdist = maxdist, ...), nfold = nfold, verbose = verbose,
+           debug.level = debug.level)
+}
+setMethod("krige.cv", c("formula", "formula"), krige.cv.locations)
+
+krige.cv.spatial = function (formula, locations, model = NULL, ..., beta = NULL,
+                             nmax = Inf, nmin = 0, maxdist = Inf, nfold = nrow(locations), verbose = interactive(),
+                             debug.level = 0) {
+  
+  # data = locations 
+  gstat.cv.par(gstat(g = NULL, id = "var1", formula = formula,
+                 data = locations, model = model, beta =
+                   beta, nmax = nmax, nmin = nmin, maxdist = maxdist,
+                 ...), nfold = nfold, verbose = verbose, debug.level = debug.level) 
+}
+setMethod("krige.cv", c("formula", "Spatial"), krige.cv.spatial)
+
+krige.cv.sf = function (formula, locations, model = NULL, ..., beta = NULL,
+                        nmax = Inf, nmin = 0, maxdist = Inf, nfold = nrow(locations), verbose = interactive(),
+                        debug.level = 0) {
+  
+  # data = locations 
+  if (!requireNamespace("sf", quietly = TRUE))
+    stop("sf required: install that first") # nocov
+  
+  sf::st_as_sf(gstat.cv.par(gstat(g = NULL, id = "var1", formula = formula,
+                              data = as(locations, "Spatial"), model = model, beta =
+                                beta, nmax = nmax, nmin = nmin, maxdist = maxdist,
+                              ...), nfold = nfold, verbose = verbose, debug.level = debug.level))
+}
+setMethod("krige.cv", c("formula", "sf"), krige.cv.sf)

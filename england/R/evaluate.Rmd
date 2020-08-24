@@ -13,6 +13,10 @@ params:
     input: file
     label: 'Select input data to import (.rds)'
     value: "../outputs/input.data.gs_eng_run_20200823-1202.rds"
+  parallel:
+    input: checkbox
+    label: 'Use multiple cores?'
+    value: TRUE
 output:
     html_document:
     html_notebook:
@@ -70,6 +74,8 @@ btf <- function(x) {
 }
 ```
 
+
+
 area|run
 ----|----
 *`r paste0(parameters$area_name, " (", parameters$area_abbr, ")")`* | *`r parameters$rundate`*
@@ -90,6 +96,18 @@ library(geoR)
 library(gstat)
 library(stars)
 library(flextable)
+library(doParallel)
+library(foreach)
+```
+
+```{r}
+# set up clusters for parallel computing
+if(parameters$parallel){
+  source("gstat.cv.par.R")
+  source("krige.cv.spatial.par.R")
+  cl <- makeCluster(10)
+  registerDoParallel()
+}
 ```
 
 ### Import model and data
@@ -125,6 +143,13 @@ inputs_summary <- rbind(prdr.summ, obs.summ) %>% data.frame() %>%
 ```
 
 
+```{r}
+#subset the data for testing 
+subset.index <- sample(1:nrow(dat_sp), size = 10000, replace = FALSE)
+dat_sp_subs <- dat_sp[subset.index,]
+
+```
+
 Model specification  
 
 ```{r, ft.align="left"}
@@ -152,24 +177,42 @@ This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross v
 #### Cross validation of spatial model
 
 ```{r}
-sm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = dat_sp, model = model.geo, 
+if (parameters$parallel) {
+  data <- dat_sp_subs
+  nfold <- 1:10
+  fold <- sample(nfold, nrow(data), replace = TRUE)
+  data$fold <- fold
+  sm.cv.sp <- foreach(i=nfold, .combine = "rbind") %dopar% {
+    cbind( 
+      gstat::krige(formula = cbrt_depth ~ elev + slope, locations = data[data$fold != i, ], 
+                   newdata = data[data$fold == i, ], model = model.geo),
+      data[data$fold == i, ])
+  } 
+  sm.cv.sp$residual <- sm.cv.sp$cbrt_depth - sm.cv.sp$var1.pred 
+  sm.cv.sp$zscore <- sm.cv.sp$residual/sqrt(sm.cv.sp$var1.var)
+  sm.cv.sp <- sm.cv.sp[,c("var1.pred", "var1.var", "cbrt_depth", "residual", "zscore", "fold")]
+} else {
+  sm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
+                       locations = dat_sp_subs,
+                       model = model.geo, 
                        nfold=10, verbose = FALSE)
+}
+
 names(sm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
 #backtransform
 sm.cv.sp$pred.btf <- btf(sm.cv.sp$pred.tf)
-sm.cv.sp$resid.btf <- sm.cv.sp$pred.btf - dat_sp$depth
+sm.cv.sp$resid.btf <- sm.cv.sp$pred.btf - dat_sp_subs$depth
 
 #add run data
 sm.cv <- sm.cv.sp@data  %>% 
   mutate( 
-    id = seq(1,nrow(sp_depth)),
+    id = seq(1,nrow(dat_sp_subs)),
     LPI = pred.tf - 1.96 * sqrt(var),
     UPI = pred.tf + 1.96 * sqrt(var),
     obsInInt = obs.tf < UPI & obs.tf > LPI) %>% 
   #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
-  bind_cols(run_tag) %>% 
+  bind_cols(run_tag[subset.index,]) %>% 
   mutate(modeltype = "sm")  
 ```
 
@@ -201,41 +244,43 @@ cat(sep = "", "Spatial model cross-validation metrics (back-transformed, ", para
 # MSPE, ideally small
 ", MSPE = ", mean(sm.cv$resid.btf^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(sp_depth$depth, sm.cv$pred.btf) %>% round(3),
+", \ncor obs&pred = ", cor(sp_depth[subset.index,]$depth, sm.cv$pred.btf) %>% round(3),
 # correlation predicted and residual, ideally 0
 ", cor pred&resid = ", cor(sm.cv$pred.btf, sm.cv$resid.btf) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = sp_depth$depth, predicted = sm.cv$pred.btf) %>% round(3),
+", R2 = ", rsq(observed = sp_depth[subset.index,]$depth, predicted = sm.cv$pred.btf) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = sm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = sp_depth[subset.index,]$depth, predicted = sm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 ```{r}
 bubble(sm.cv.sp, "resid.btf", main = "10-fold CV residuals: spatial model")
 ```
+
+
 #### Cross validation of linear model
 
 
 ```{r}
 #linear model cv
 lm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = dat_sp, model = NULL, 
+                       locations = dat_sp[subset.index,], model = NULL, 
                        nfold=10, verbose = FALSE)
 names(lm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
 #backtransform
 lm.cv.sp$pred.btf <- btf(lm.cv.sp$pred.tf)
-lm.cv.sp$resid.btf <- lm.cv.sp$pred.btf - dat_sp$depth
+lm.cv.sp$resid.btf <- lm.cv.sp$pred.btf - dat_sp[subset.index,]$depth
 
 #add run data
 lm.cv <- lm.cv.sp@data  %>% 
   mutate( 
-    id = seq(1,nrow(sp_depth)),
+    id = seq(1,nrow(sp_depth[subset.index,])),
     LPI = pred.tf - 1.96 * sqrt(var),
     UPI = pred.tf + 1.96 * sqrt(var),
     obsInInt = obs.tf < UPI & obs.tf > LPI) %>% 
   #select(pred.tf, var, obs.tf, LPI, UPI, obsInInt) %>%
-  bind_cols(run_tag) %>% 
+  bind_cols(run_tag[subset.index,]) %>% 
   mutate(modeltype = "lm") 
 ```
 
@@ -266,13 +311,13 @@ cat(sep = "", "Linear model cross-validation metrics (back-transformed, ", param
 # MSPE, ideally small
 ", MSPE = ", mean(lm.cv$resid.btf^2) %>% round(3),
 # correlation observed and predicted, ideally 1
-", \ncor obs&pred = ", cor(sp_depth$depth, lm.cv$pred.btf) %>% round(3),
+", \ncor obs&pred = ", cor(sp_depth[subset.index,]$depth, lm.cv$pred.btf) %>% round(3),
 # correlation predicted and residual, ideally 0
 ", cor pred&resid = ", cor(lm.cv$pred.btf, lm.cv$resid.btf) %>% round(3),
 # RSquared
-", R2 = ", rsq(observed = sp_depth$depth, predicted = lm.cv$pred.btf) %>% round(3),
+", R2 = ", rsq(observed = sp_depth[subset.index,]$depth, predicted = lm.cv$pred.btf) %>% round(3),
 # Adjusted RSquared
-", R2 adj = ", rsq.adj(observed = sp_depth$depth, predicted = lm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
+", R2 adj = ", rsq.adj(observed = sp_depth[subset.index,]$depth, predicted = lm.cv$pred.btf, n.predictors = 3, df.int = 1) %>% round(3)
 )
 ```
 
@@ -286,12 +331,12 @@ Linear regression with no spatial component
 
 ```{r}
 #null model lm
-lm.null <- lm(depth ~ elev + slope, dat_sp)
+lm.null <- lm(depth ~ elev + slope, dat_sp[subset.index,])
 summary(lm.null)
 
   #save predictions
 nullmodel <- data.frame(pred.btf = lm.null$fitted.values, modeltype = as.factor("null"), 
-                        id = seq(1,nrow(dat_sp)),
+                        id = seq(1,nrow(dat_sp[subset.index,])),
                         area_abbr = parameters$area_abbr, rundate = parameters$rundate)
 
 cat(sep = "", "Linear null-model metrics (", parameters$area_abbr, "_", parameters$rundate,
@@ -309,18 +354,18 @@ cat("\n\nModel equation\n", model_equation(model = lm.null))
 # Parry 1
 #  lpdepth=Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england")-25+(0.5*Exp(0.875+0.00758*"dtm_metres"-0.0903*"slope_england"))
 
-pred.parry <- exp(0.875 + 0.00758 * dat_sp$elev - 0.0903 * dat_sp$slope) - 25 + (0.5 * exp(0.875 + 0.00758 * dat_sp$elev - 0.0903 * dat_sp$slope))
+pred.parry <- exp(0.875 + 0.00758 * dat_sp[subset.index,]$elev - 0.0903 * dat_sp[subset.index,]$slope) - 25 + (0.5 * exp(0.875 + 0.00758 * dat_sp[subset.index,]$elev - 0.0903 * dat_sp[subset.index,]$slope))
 
-pred.parry <- data.frame(pred.btf = pred.parry, resid.btf = pred.parry - dat_sp$depth, 
-                         modeltype = as.factor("parry"), id = seq(1,nrow(dat_sp)), 
+pred.parry <- data.frame(pred.btf = pred.parry, resid.btf = pred.parry - dat_sp[subset.index,]$depth, 
+                         modeltype = as.factor("parry"), id = seq(1,nrow(dat_sp[subset.index,])), 
                          area_abbr = parameters$area_abbr, rundate = parameters$rundate) 
 
 cat(sep = "", "Exponential model by Parry, metrics (", parameters$area_abbr, "_", parameters$rundate,
 # mean error, ideally 0:
-"):\nR2 = ", rsq(observed = dat_sp$depth, predicted = pred.parry$pred.btf) %>% round(3),
-      ", R2 adj = ", rsq.adj(observed = dat_sp$depth, predicted = pred.parry$pred.btf,
+"):\nR2 = ", rsq(observed = dat_sp[subset.index,]$depth, predicted = pred.parry$pred.btf) %>% round(3),
+      ", R2 adj = ", rsq.adj(observed = dat_sp[subset.index,]$depth, predicted = pred.parry$pred.btf,
                              n.predictors = 2, df.int = 1) %>% round(3),
-      ", RMSE = ", rmse(observed = dat_sp$depth, predicted = pred.parry$pred.btf) %>% round(3), " cm")
+      ", RMSE = ", rmse(observed = dat_sp[subset.index,]$depth, predicted = pred.parry$pred.btf) %>% round(3), " cm")
 
 cat("\n\nModel equation\nexp(0.875 + 0.00758 * elev - 0.0903 * slope) - 25 + (0.5 * exp(0.875 + 0.00758 * elev - 0.0903 * slope))")
 ```
@@ -328,7 +373,7 @@ cat("\n\nModel equation\nexp(0.875 + 0.00758 * elev - 0.0903 * slope) - 25 + (0.
 ```{r}
 #merge cv datasets and backtransform
 results.cv <- bind_rows(sm.cv, lm.cv, nullmodel, pred.parry) %>% 
-  full_join(dat_sp@data, by = c("id", "area_abbr", "rundate")) %>% 
+  full_join(dat_sp@data[subset.index,], by = c("id", "area_abbr", "rundate")) %>% 
   mutate_if(is.character, as.factor) %>% 
   dplyr::select(id, area_abbr, rundate, depth:cbrt_depth, everything())
 # summary(results.cv)
