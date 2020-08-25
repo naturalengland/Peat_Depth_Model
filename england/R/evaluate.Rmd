@@ -17,6 +17,10 @@ params:
     input: checkbox
     label: 'Use multiple cores?'
     value: TRUE
+  subset:
+    input: checkbox
+    label: 'Subset large dataset? (selects 10,000 observations at random for evaluation)'
+    value: TRUE
 output:
     html_document:
     html_notebook:
@@ -129,6 +133,11 @@ dat_sp <- cbind(sp_depth,
 names(dat_sp) <- c(names(sp_depth), "area_abbr", "rundate")
 dat_sp$id <- seq(1,nrow(sp_depth))
 
+#subset the data for testing 
+if(parameters$subset){
+subset.index <- sample(1:nrow(dat_sp), size = 10000, replace = FALSE)
+dat_sp <- dat_sp[subset.index,]
+}
 # summarise data and covariate space
 prdr.summ <- data.frame(dataset = "predictors", n_points = ncell(predictors), depth_med = as.numeric(NA), 
             depth_min = as.numeric(NA), depth_max = as.numeric(NA),
@@ -142,13 +151,6 @@ inputs_summary <- rbind(prdr.summ, obs.summ) %>% data.frame() %>%
   mutate_at(vars(elev_min:slope_max), funs(round, .args = list("digits" = 2)))
 ```
 
-
-```{r}
-#subset the data for testing 
-subset.index <- sample(1:nrow(dat_sp), size = 10000, replace = FALSE)
-dat_sp_subs <- dat_sp[subset.index,]
-
-```
 
 Model specification  
 
@@ -177,8 +179,9 @@ This analysis uses the `gstat` function `krige.cv()` to perform ten-fold cross v
 #### Cross validation of spatial model
 
 ```{r}
-if (parameters$parallel) {
-  data <- dat_sp_subs
+# run cross validation 
+if (parameters$parallel) { # cross validation on multiple cores
+  data <- dat_sp
   nfold <- 1:10
   fold <- sample(nfold, nrow(data), replace = TRUE)
   data$fold <- fold
@@ -191,9 +194,9 @@ if (parameters$parallel) {
   sm.cv.sp$residual <- sm.cv.sp$cbrt_depth - sm.cv.sp$var1.pred 
   sm.cv.sp$zscore <- sm.cv.sp$residual/sqrt(sm.cv.sp$var1.var)
   sm.cv.sp <- sm.cv.sp[,c("var1.pred", "var1.var", "cbrt_depth", "residual", "zscore", "fold")]
-} else {
+} else { # standard cross validation
   sm.cv.sp <- krige.cv(formula = cbrt_depth ~ elev + slope, 
-                       locations = dat_sp_subs,
+                       locations = dat_sp,
                        model = model.geo, 
                        nfold=10, verbose = FALSE)
 }
@@ -202,12 +205,12 @@ names(sm.cv.sp) <- c("pred.tf", "var", "obs.tf", "resid.tf", "zscore", "fold")
 
 #backtransform
 sm.cv.sp$pred.btf <- btf(sm.cv.sp$pred.tf)
-sm.cv.sp$resid.btf <- sm.cv.sp$pred.btf - dat_sp_subs$depth
+sm.cv.sp$resid.btf <- sm.cv.sp$pred.btf - dat_sp$depth
 
 #add run data
 sm.cv <- sm.cv.sp@data  %>% 
   mutate( 
-    id = seq(1,nrow(dat_sp_subs)),
+    id = seq(1,nrow(dat_sp)),
     LPI = pred.tf - 1.96 * sqrt(var),
     UPI = pred.tf + 1.96 * sqrt(var),
     obsInInt = obs.tf < UPI & obs.tf > LPI) %>% 
