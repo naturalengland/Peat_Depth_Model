@@ -1,0 +1,215 @@
+﻿Grid pt,Site,GIS_ID,Original grid pt,Date,Easting,Northing,Peat depth (cm),Soil notes,Forested? (Y/N),Other notes
+1,Long Moss,SPLMP_1,1,Jan 2018,362850,570600,40,,Y,On slope down to river
+2,Long Moss,SPLMP_2,2,Jan 2018,362500,570550,0,,Y,By river
+3,Long Moss,SPLMP_3,3,Jan 2018,362550,570550,0,,Y,By river 
+4,Long Moss,SPLMP_4,4,Jan 2018,362600,570550,0,,Y,On slope down to river
+5,Long Moss,SPLMP_5,5,Jan 2018,362650,570550,20,,Y,On slope down to river
+6,Long Moss,SPLMP_6,6,Jan 2018,362700,570550,20,,Y,On slope down to river
+7,Long Moss,SPLMP_7,7,Jan 2018,362750,570550,20,,Y,On slope down to river
+8,Long Moss,SPLMP_8,8,Jan 2018,362800,570550,40,,Y,On slope down to river
+9,Long Moss,SPLMP_9,9,Jan 2018,362850,570550,50,,Y,On slope down to river
+10,Long Moss,SPLMP_10,10,Jan 2018,362900,570550,50,,Y ,Edge of forest by wire fence
+11,Long Moss,SPLMP_11,11,Jan 2018,362400,570500,0,,Y,By river
+12,Long Moss,SPLMP_12,12,Jan 2018,362450,570500,20,,Y,
+13,Long Moss,SPLMP_13,13,Jan 2018,362500,570500,40,,Y,
+14,Long Moss,SPLMP_14,14,Jan 2018,362550,570500,50,,Y,
+15,Long Moss,SPLMP_15,15,Jan 2018,362600,570500,80,,Y,
+16,Long Moss,SPLMP_16,16,Jan 2018,362650,570500,30,,Y,
+17,Long Moss,SPLMP_17,17,Jan 2018,362700,570500,40,Peat over very gritty clay,Y,Verified with auger. 
+18,Long Moss,SPLMP_18,18,Jan 2018,362750,570500,50,,Y,
+19,Long Moss,SPLMP_19,19,Jan 2018,362800,570500,60,,Y,
+20,Long Moss,SPLMP_20,20,Jan 2018,362850,570500,110,,Y,
+21,Long Moss,SPLMP_21,21,Jan 2018,362900,570500,170,,Y,
+22,Long Moss,SPLMP_22,22,Jan 2018,362350,570450,0,,Y,By river
+23,Long Moss,SPLMP_23,23,Jan 2018,362400,570450,70,,Y,Sloping down to river
+24,Long Moss,SPLMP_24,24,Jan 2018,362450,570450,60,,Y,
+25,Long Moss,SPLMP_25,35,Jan 2018,362050,570400,20,Peat over rock,Y,Sloping bank down to river. Edge of peat assumed between here and river. 
+26,Long Moss,SPLMP_26,36,Jan 2018,362100,570400,15,Peaty soil,Y,At edge
+27,Long Moss,SPLMP_27,37,Jan 2018,362150,570400,30,,Y,
+28,Long Moss,SPLMP_28,38,Jan 2018,362200,570400,20,,Y,
+29,Long Moss,SPLMP_29,39,Jan 2018,362300,570400,0,,Y,By river
+30,Long Moss,SPLMP_30,40,Jan 2018,362350,570400,40,,Y,
+31,Long Moss,SPLMP_31,41,Jan 2018,362400,570400,20,,Y,Edge of clearing
+32,Long Moss,SPLMP_32,42,Jan 2018,362450,570400,40,,Y,By fence
+33,Long Moss,SPLMP_33,43,Jan 2018,362500,570400,40,,Y,
+34,Long Moss,SPLMP_34,45,Jan 2018,362600,570400,45,,Y,
+35,Long Moss,SPLMP_35,47,Jan 2018,362700,570400,30,,Y,
+36,Long Moss,SPLMP_36,49,Jan 2018,362800,570400,40,,Y,
+37,Long Moss,SPLMP_37,51,Jan 2018,362900,570400,35,,Y,
+38,Long Moss,SPLMP_38,52,Jan 2018,362950,570400,40,,Y,
+39,Long Moss,SPLMP_39,53,Jan 2018,362000,570350,0,Sandy organic soil,Y,Edge of forest. Steep drop to river
+40,Long Moss,SPLMP_40,58,Jan 2018,362250,570350,50,,Y,
+41,Long Moss,SPLMP_41,59,Jan 2018,362300,570350,30,,Y,
+42,Long Moss,SPLMP_42,63,Jan 2018,362500,570350,200,,Y,Peaty forestry furrows. Lovely lichens.
+43,Long Moss,SPLMP_43,74,Jan 2018,362000,570300,0,,N,"Edge, in old quarry? RAF training area."
+44,Long Moss,SPLMP_44,75,Jan 2018,362050,570300,40,Peat over stone,Y,Mound with brash
+45,Long Moss,SPLMP_45,76,Jan 2018,362100,570300,50,,Y,"Dense young conifers, difficult to move through!"
+46,Long Moss,SPLMP_46,77,Jan 2018,362150,570300,40,,Y,Dense young conifers
+47,Long Moss,SPLMP_47,78,Jan 2018,362200,570300,80,,Y,Dense young conifers
+48,Long Moss,SPLMP_48,79,Jan 2018,362250,570300,100,,Y,Dense young conifers
+49,Long Moss,SPLMP_49,80,Jan 2018,362300,570300,30,,Y,
+50,Long Moss,SPLMP_50,81,Jan 2018,362350,570300,20,,Y,Dense young conifers. Sloping
+51,Long Moss,SPLMP_51,82,Jan 2018,362400,570300,40,,Y,Smallish trees on old clearfell. Gentle slope down to SW. some boulders at surface
+52,Long Moss,SPLMP_52,83,Jan 2018,362450,570300,200,,Y,Smallish trees on old clearfell
+53,Long Moss,SPLMP_53,84,Jan 2018,362500,570300,120,,Y,Stunted trees in places
+54,Long Moss,SPLMP_54,86,Jan 2018,362600,570300,50,,Y,
+55,Long Moss,SPLMP_55,88,Jan 2018,362700,570300,80,,Y,
+56,Long Moss,SPLMP_56,90,Jan 2018,362800,570300,60,,Y,
+57,Long Moss,SPLMP_57,92,Jan 2018,362900,570300,120,,Y,
+58,Long Moss,SPLMP_58,94,Jan 2018,363000,570300,30,,Y,Edge
+59,Long Moss,SPLMP_59,95,Jan 2018,361950,570250,0,,N,Visually no peat
+60,Long Moss,SPLMP_60,97,Jan 2018,362050,570250,160,Verified with auger. Peat and woody peat,Y,Beside ditch T3. 
+61,Long Moss,SPLMP_61,98,Jan 2018,362100,570250,110,Sticky by 110cm then gravel / clay at 115,Y,Smallish trees
+62,Long Moss,SPLMP_62,118,Jan 2018,361900,570200,0,,N,Made ground 
+63,Long Moss,SPLMP_63,119,Jan 2018,361950,570200,0,,N,"Next to an access track, concrete? Also near a drain. Large elongated spoil mound."
+64,Long Moss,SPLMP_64,120,Jan 2018,362000,570200,0,,Y,"Partially planted, small trees. Spoil mound"
+65,Long Moss,SPLMP_65,121,Jan 2018,362050,570200,20,,Y,"Bottom of ridge, Edge of forest block"
+66,Long Moss,SPLMP_66,122,Jan 2018,362100,570200,0,,Y,"On ridge slope, partly felled. Natural? Badger holes nearby"
+67,Long Moss,SPLMP_67,123,Jan 2018,362150,570200,20,,N,Open with some scattered spruce
+68,Long Moss,SPLMP_68,124,Jan 2018,362200,570200,0,,N,No but young forest adjacent
+69,Long Moss,SPLMP_69,125,Jan 2018,362250,570200,30,,Y,Dense young conifers
+70,Long Moss,SPLMP_70,126,Jan 2018,362300,570200,10,,Y,Dense young conifers
+71,Long Moss,SPLMP_71,127,Jan 2018,362350,570200,30,,Y,Dense young conifers
+72,Long Moss,SPLMP_72,128,Jan 2018,362400,570200,40,,Y,Dense young conifers. Close to a ditch 
+73,Long Moss,SPLMP_73,129,Jan 2018,362450,570200,20,,Y,Dense young conifers
+74,Long Moss,SPLMP_74,130,Jan 2018,362500,570200,40,,Y,
+75,Long Moss,SPLMP_75,132,Jan 2018,362600,570200,50,,Y,
+76,Long Moss,SPLMP_76,134,Jan 2018,362700,570200,50,,Y,Largish trees
+77,Long Moss,SPLMP_77,136,Jan 2018,362800,570200,40,,Y,Largish trees. Crossed ditch between 135 and 135 as t25
+78,Long Moss,SPLMP_78,138,Jan 2018,362900,570200,40,,Y,Largish trees. 
+79,Long Moss,SPLMP_79,140,Jan 2018,363000,570200,60,,Y,Mostly largish trees. 
+80,Long Moss,SPLMP_80,141,Jan 2018,363050,570200,160,,Y,Edge. Some planting of broadleaves but looking sick or dead!
+81,Long Moss,SPLMP_81,142,Jan 2018,363100,570200,180,Gravel at 2m ,N,Track area between fence and forest edge
+82,Long Moss,SPLMP_82,143,Jan 2018,361850,570150,0,Clay and gravel,N,
+83,Long Moss,SPLMP_83,144,Jan 2018,361900,570150,0,Spoil,Regen,
+84,Long Moss,SPLMP_84,169,Jan 2018,361850,570100,0,,Regen,
+85,Long Moss,SPLMP_85,170,Jan 2018,361900,570100,0,Spoil,Regen,Part of old RAF camp 
+86,Long Moss,SPLMP_86,172,Jan 2018,362000,570100,0,Spoil ,N,Part of old RAF camp 
+87,Long Moss,SPLMP_87,174,Jan 2018,362100,570100,0,Spoil ,Regen,Part of old RAF camp 
+88,Long Moss,SPLMP_88,176,Jan 2018,362200,570100,40,,Regen,
+89,Long Moss,SPLMP_89,178,Jan 2018,362300,570100,30,,Y,"Replanted, dense young conifers"
+90,Long Moss,SPLMP_90,180,Jan 2018,362400,570100,125,,Y,"Replanted, dense young conifers"
+91,Long Moss,SPLMP_91,182,Jan 2018,362500,570100,10,,Y,
+92,Long Moss,SPLMP_92,184,Jan 2018,362600,570100,30,,Y,
+93,Long Moss,SPLMP_93,186,Jan 2018,362700,570100,30,,Y,
+94,Long Moss,SPLMP_94,188,Jan 2018,362800,570100,40,,Y,Tallish trees
+95,Long Moss,SPLMP_95,190,Jan 2018,362900,570100,30,,Y,
+96,Long Moss,SPLMP_96,192,Jan 2018,363000,570100,50,,Y,Stunted. Some look chlorotic. Evidence of old broadleave planting unsuccessful 
+97,Long Moss,SPLMP_97,194,Jan 2018,363100,570100,90,,Y,
+98,Long Moss,SPLMP_98,195,Jan 2018,363150,570100,130,,Y,Edge
+99,Long Moss,SPLMP_99,196,Jan 2018,361850,570050,0,,Y,Edge of steep scarp above river
+100,Long Moss,SPLMP_100,197,Jan 2018,361900,570050,0,Spoil from ditch?,Regen,
+101,Long Moss,SPLMP_101,223,Jan 2018,361850,570000,0,,Y,Slopes down to river
+102,Long Moss,SPLMP_102,224,Jan 2018,361913,570002,0,Spoil?,N,Close to road. New grid ref
+103,Long Moss,SPLMP_103,225,Jan 2018,361950,570000,0,Spoil?,N,
+104,Long Moss,SPLMP_104,226,Jan 2018,362000,570000,0,Spoil?,N,
+105,Long Moss,SPLMP_105,228,Jan 2018,362100,570000,100,,Y,
+106,Long Moss,SPLMP_106,230,Jan 2018,362200,570000,230,,Y,"Replanted, dense young conifers"
+107,Long Moss,SPLMP_107,232,Jan 2018,362300,570000,100,,Y,"Replanted, dense young conifers"
+108,Long Moss,SPLMP_108,234,Jan 2018,362400,570000,0,,N,Quarry 
+109,Long Moss,SPLMP_109,236,Jan 2018,362500,570000,50,,Y,Edge of forest strip alongside track
+110,Long Moss,SPLMP_110,238,Jan 2018,362600,570000,30,,N,Regen
+111,Long Moss,SPLMP_111,240,Jan 2018,362700,570000,60,,N,Edge of forest strip alongside track
+112,Long Moss,SPLMP_112,242,Jan 2018,362800,570000,20,,N,Regen
+113,Long Moss,SPLMP_113,245,Jan 2018,363200,570000,140,,N,
+114,Long Moss,SPLMP_114,247,Jan 2018,361850,569950,0,,Y,Edge
+115,Long Moss,SPLMP_115,260,Jan 2018,361800,569900,20,,Y,Depth in furrow beside mound
+116,Long Moss,SPLMP_116,261,Jan 2018,361850,569900,30,,Y,
+117,Long Moss,SPLMP_117,262,Jan 2018,361900,569900,40,,Y,
+118,Long Moss,SPLMP_118,264,Jan 2018,362000,569900,30,,Y,Edge
+119,Long Moss,SPLMP_119,266,Jan 2018,362100,569900,50,,Y,
+120,Long Moss,SPLMP_120,268,Jan 2018,362200,569900,30,,Y,Edge
+121,Long Moss,SPLMP_121,270,Jan 2018,362300,569900,200,,N,Regen
+122,Long Moss,SPLMP_122,272,Jan 2018,363250,569900,220,,N,
+123,Long Moss,SPLMP_123,273,Jan 2018,361800,569850,10,Peat,Y,
+124,Long Moss,SPLMP_124,274,Jan 2018,361850,569850,30,,Y,
+125,Long Moss,SPLMP_125,284,Jan 2018,361800,569800,10,,Y,
+126,Long Moss,SPLMP_126,285,Jan 2018,361850,569800,20,,Y,
+127,Long Moss,SPLMP_127,286,Jan 2018,361900,569800,30,,Y,
+128,Long Moss,SPLMP_128,288,Jan 2018,362000,569800,220,,Y,
+129,Long Moss,SPLMP_129,290,Jan 2018,362100,569800,250,,Y,
+130,Long Moss,SPLMP_130,292,Jan 2018,362200,569800,90,,Y,Tall
+131,Long Moss,SPLMP_131,294,Jan 2018,362300,569800,150,,Y,Between two forest blocks
+132,Long Moss,SPLMP_132,295,Jan 2018,361900,569750,75,,Y,
+133,Long Moss,SPLMP_133,296,Jan 2018,361950,569750,65,,Y,
+134,Long Moss,SPLMP_134,305,Jan 2018,361950,569700,30,,Y,Sloping 
+135,Long Moss,SPLMP_135,306,Jan 2018,362000,569700,15,,Y,Near road 
+136,Long Moss,SPLMP_136,307,Jan 2018,362050,569700,20,,Y,On bank between forest and road. Made ground?
+137,Long Moss,SPLMP_137,308,Jan 2018,362100,569700,30,,Y,Tall mature conifers
+138,Long Moss,SPLMP_138,310,Jan 2018,362200,569700,40,,Y,Tall mature conifers
+139,Long Moss,SPLMP_139,312,Jan 2018,362300,569700,40,,Y,
+140,Long Moss,SPLMP_140,315,Jan 2018,362100,569650,20,,Y,Between forest and road
+141,Long Moss,SPLMP_141,321,Jan 2018,362100,569600,80,,Y,Between forest and road
+142,Long Moss,SPLMP_142,322,Jan 2018,362150,569600,90,,Regen,
+143,Long Moss,SPLMP_143,323,Jan 2018,362200,569600,170,,Regen,
+144,Long Moss,SPLMP_144,325,Jan 2018,362300,569600,260,,Regen,
+145,Long Moss,SPLMP_145,327,Jan 2018,362100,569550,90,,Y,
+146,Long Moss,SPLMP_146,328,Jan 2018,362150,569550,110,,Regen,
+147,Long Moss,SPLMP_147,333,Jan 2018,362100,569500,35,,N,
+148,Long Moss,SPLMP_148,334,Jan 2018,362150,569500,30,,N,
+149,Long Moss,SPLMP_149,335,Jan 2018,362200,569500,25,,Regen,
+150,Long Moss,SPLMP_150,337,Jan 2018,362300,569500,230,,Regen,
+151,Long Moss,SPLMP_151,338,Jan 2018,363000,569500,50,,N,
+152,Long Moss,SPLMP_152,340,Jan 2018,363100,569500,20,,Regen,
+153,Long Moss,SPLMP_153,342,Jan 2018,363200,569500,70,,Regen,
+154,Long Moss,SPLMP_154,344,Jan 2018,363300,569500,80,,Regen,
+155,Long Moss,SPLMP_155,345,Jan 2018,363350,569500,55,,Regen,
+156,Long Moss,SPLMP_156,346,Jan 2018,363400,569500,50,,N,Between road and forest edge
+157,Long Moss,SPLMP_157,347,Jan 2018,362100,569450,30,,N,Clear fell 
+158,Long Moss,SPLMP_158,348,Jan 2018,362150,569450,40,,N,Close to road
+159,Long Moss,SPLMP_159,349,Jan 2018,362200,569450,25,,N,
+160,Long Moss,SPLMP_160,364,Jan 2018,362150,569400,60,,N,Clear fell. Near road
+161,Long Moss,SPLMP_161,365,Jan 2018,362200,569400,0,,N,
+162,Long Moss,SPLMP_162,366,Jan 2018,362250,569400,70,,Y,
+163,Long Moss,SPLMP_163,367,Jan 2018,362300,569400,50,,Y,
+164,Long Moss,SPLMP_164,368,Jan 2018,362350,569400,50,,Y,
+165,Long Moss,SPLMP_165,369,Jan 2018,362400,569400,30,,N,Under power lines
+166,Long Moss,SPLMP_166,371,Jan 2018,362500,569400,100,,Regen ,
+167,Long Moss,SPLMP_167,374,Jan 2018,362750,569400,80,,Regen,
+168,Long Moss,SPLMP_168,375,Jan 2018,362800,569400,50,,Regen,
+169,Long Moss,SPLMP_169,377,Jan 2018,362900,569400,40,,Y,"Replanted, dense young conifers"
+170,Long Moss,SPLMP_170,379,Jan 2018,363000,569400,50,,Y,"Replanted, dense young conifers"
+171,Long Moss,SPLMP_171,381,Jan 2018,363100,569400,40,,Y,"Replanted, dense young conifers"
+172,Long Moss,SPLMP_172,383,Jan 2018,363200,569400,55,,Y,"Replanted, dense young conifers"
+173,Long Moss,SPLMP_173,384,Jan 2018,363250,569400,40,,Y,"Replanted, dense young conifers"
+174,Long Moss,SPLMP_174,385,Jan 2018,363300,569400,30,,N,Between road and forest edge
+175,Long Moss,SPLMP_175,387,Jan 2018,362150,569350,0,Thin peaty soil,Y,Young replanted. Close to broad water course. Lots of brash.
+176,Long Moss,SPLMP_176,388,Jan 2018,362200,569350,30,,N,
+177,Long Moss,SPLMP_177,425,Jan 2018,363100,569300,40,,Y,Edge
+178,Long Moss,SPLMP_178,427,Jan 2018,363200,569300,0,,N,Edge
+179,Long Moss,SPLMP_179,564,Jan 2018,362900,570000,140,,Regen,"Regenerating conifers are abundant throughout the whole area of deep bog peat that was previously planted, mostly 1-3 m tall. There are also some lines of taller conifers. These should all be felled and the brash removed. There is much brash present as a remnant from the earlier clear-felling operation which should have been removed in order to help the bog vegetation to recover."
+180,Long Moss,SPLMP_180,565,Jan 2018,363000,570000,280,,Regen,
+181,Long Moss,SPLMP_181,566,Jan 2018,363100,570000,300,Gravel at bottom,Regen,
+182,Long Moss,SPLMP_182,571,Jan 2018,362800,569900,450,,Regen,
+183,Long Moss,SPLMP_183,580,Jan 2018,362800,569800,560,,Regen,
+184,Long Moss,SPLMP_184,586,Jan 2018,362400,569700,20,Mineral ridge?,Regen,
+185,Long Moss,SPLMP_185,587,Jan 2018,362500,569700,360,,Regen,
+186,Long Moss,SPLMP_186,588,Jan 2018,362600,569700,400,,Regen,
+187,Long Moss,SPLMP_187,589,Jan 2018,362700,569700,500,,Regen,
+188,Long Moss,SPLMP_188,590,Jan 2018,362800,569700,610,,Regen,
+189,Long Moss,SPLMP_189,591,Jan 2018,362900,569700,820,,Regen,
+190,Long Moss,SPLMP_190,592,Jan 2018,363000,569700,810,,Regen,
+191,Long Moss,SPLMP_191,593,Jan 2018,363100,569700,900,,Regen,
+192,Long Moss,SPLMP_192,594,Jan 2018,363200,569700,520,Solid by 520,Regen,
+193,Long Moss,SPLMP_193,595,Jan 2018,363300,569700,350,,Regen,
+194,Long Moss,SPLMP_194,596,Jan 2018,363400,569700,100,,Regen,
+195,Long Moss,SPLMP_195,601,Jan 2018,362800,569600,850,Stiffness started at about 850. Bottomed out at 880cm,Regen,
+196,Long Moss,SPLMP_196,612,Jan 2018,362800,569500,500,,Regen,Next to remnant wind break / line of tall conifers running across the centre of the deep bog area
+197,Long Moss,SPLMP_197,615,Jan 2018,362600,569400,90,,Regen,
+198,Long Moss,SPLMP_198,616,Jan 2018,362700,569400,180,,Regen,
+199,Long Moss,SPLMP_199,E1,Jan 2018,362100,569397,20,,Y,Young replanted
+200,Long Moss,SPLMP_200,E2,Jan 2018,362051,569447,30,,Y,Young replanted
+201,Long Moss,SPLMP_201,E3,Jan 2018,361998,569446,150,,Y,Young replanted.
+202,Long Moss,SPLMP_202,E4,Jan 2018,362000,569396,20,,Y,Young replanted. Area has many boulders on surface - dug up by planting operations
+203,Long Moss,SPLMP_203,E5,Jan 2018,362050,569396,30,,Y,Young replanted
+204,Long Moss,SPLMP_204,E6,Jan 2018,361749,569898,0,Peaty soil,Y,Sloping
+205,Long Moss,SPLMP_205,E7,Jan 2018,361750,569850,15,,Y,
+206,Long Moss,SPLMP_206,E8,Jan 2018,361750,569800,20,,Y,
+207,Long Moss,SPLMP_207,E9,Jan 2018,361848,569748,60,,Y,
+208,Long Moss,SPLMP_208,E10,Jan 2018,361850,569697,20,,Y,Sloping down to track
+209,Long Moss,SPLMP_209,E11,Jan 2018,361800,569748,25,,Y,Sloping
+210,Long Moss,SPLMP_210,E12,Jan 2018,361902,569698,0,,Y,Sloping
+211,Long Moss,SPLMP_211,E13,Jan 2018,362050,569494,50,,N,
+212,Long Moss,SPLMP_212,E14,Jan 2018,362051,569547,10,Disturbed,N,Between two tracks
+213,Long Moss,SPLMP_213,E15,Jan 2018,362051,569596,40,,Y,
+214,Long Moss,SPLMP_214,E16,Jan 2018,362052,569650,0,,Y,Edge. Close to road

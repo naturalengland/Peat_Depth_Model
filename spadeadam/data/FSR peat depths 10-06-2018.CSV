@@ -1,0 +1,283 @@
+Grid_pt,Site_name,GIS_ID,Orig_grid,Date,Easting,Northing,Peat_depth (cm),Soil_notes,Forested?,Other_notes,50m_gridID,100m_grID,Surveyors,Created by,Create_date
+1,Foalstand Rigg,SPFSRP_1,5,March-May 2018,360950,572450,20,,Y,Young replanted. Close to GL compound fence,190,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+2,Foalstand Rigg,SPFSRP_2,6,March-May 2018,361000,572450,20,,Y,Young replanted ,191,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+3,Foalstand Rigg,SPFSRP_3,7,March-May 2018,361050,572450,120,,Y,Young replanted ,192,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+4,Foalstand Rigg,SPFSRP_4,8,March-May 2018,361100,572450,100,,Y,50cm peat 10m to north. 0cm peat 15m to north,193,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+5,Foalstand Rigg,SPFSRP_5,10,March-May 2018,361200,572450,0,,Y,Young replanted ,195,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+6,Foalstand Rigg,SPFSRP_6,11,March-May 2018,361250,572450,0,,N,On slope down to stream,196,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+7,Foalstand Rigg,SPFSRP_7,28,March-May 2018,360950,572400,0,,Y,Young replanted ,249,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+8,Foalstand Rigg,SPFSRP_8,29,March-May 2018,361000,572400,20,,Y,Young replanted ,250,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+9,Foalstand Rigg,SPFSRP_9,30,March-May 2018,361050,572400,140,,Y,Young replanted ,251,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+10,Foalstand Rigg,SPFSRP_10,31,March-May 2018,361100,572400,70,,Y,Young replanted ,252,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+11,Foalstand Rigg,SPFSRP_11,32,March-May 2018,361150,572400,70,,Y,Young replanted ,253,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+12,Foalstand Rigg,SPFSRP_12,33,March-May 2018,361200,572400,240,,Y,Young replanted ,254,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+13,Foalstand Rigg,SPFSRP_13,34,March-May 2018,361250,572400,220,,Regen,Brash,255,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+14,Foalstand Rigg,SPFSRP_14,35,March-May 2018,361300,572400,170,,Y,Close to edge of plantation and then the road. ,256,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+15,Foalstand Rigg,SPFSRP_15,37,March-May 2018,361400,572400,120,,Y,,258,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+16,Foalstand Rigg,SPFSRP_16,39,March-May 2018,361500,572400,120,,Y,,260,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+17,Foalstand Rigg,SPFSRP_17,41,March-May 2018,361600,572400,90,,Y,About 40 m from fence of testing site. Slopes down to stream. 0cm peat is 5m south of stream and 50 cm peat is 10m south of stream.,262,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+18,Foalstand Rigg,SPFSRP_18,54,March-May 2018,361050,572350,0,,Y,Young replanted ,310,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+19,Foalstand Rigg,SPFSRP_19,56,March-May 2018,361700,572350,290,,Y,Spindly trees,323,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+20,Foalstand Rigg,SPFSRP_20,57,March-May 2018,361800,572350,290,,Y,,325,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+21,Foalstand Rigg,SPFSRP_21,59,March-May 2018,361900,572350,25,,Y,0 cm peat is 5 m to north. 50 cm is 3 m to south. Sloping down to north.  ,327,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+22,Foalstand Rigg,SPFSRP_22,61,March-May 2018,362000,572350,130,,Y,Sloping down to stream to north. 50 cm peat is 8 m to north and 0 cm is about 15 m.  ,329,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+23,Foalstand Rigg,SPFSRP_23,63,March-May 2018,362100,572340,50,,Y,,331,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+24,Foalstand Rigg,SPFSRP_24,67,March-May 2018,362300,572350,10,,N,"Just outside edge of plantation, on slope down to stream. 50 cm peat is about 2 m south.",335,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+25,Foalstand Rigg,SPFSRP_25,69,March-May 2018,361000,572300,60,,Y,Young replanted. 10m north is zero peat,368,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+26,Foalstand Rigg,SPFSRP_26,70,March-May 2018,361050,572300,0,,N, between two planted blocks. 50cm peat is c. 3m to south,369,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+27,Foalstand Rigg,SPFSRP_27,71,March-May 2018,361100,572300,100,,Y,Young replanted ,370,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+28,Foalstand Rigg,SPFSRP_28,72,March-May 2018,361200,572300,320,,Regen,Near road,372,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+29,Foalstand Rigg,SPFSRP_29,73,March-May 2018,361300,572300,280,,Y,,374,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+30,Foalstand Rigg,SPFSRP_30,74,March-May 2018,361400,572300,500,,Y,,376,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+31,Foalstand Rigg,SPFSRP_31,75,March-May 2018,361500,572300,640,,Y,,378,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+32,Foalstand Rigg,SPFSRP_32,76,March-May 2018,361600,572300,660,,Y,,380,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+33,Foalstand Rigg,SPFSRP_33,77,March-May 2018,361700,572300,600,,Y,,382,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+34,Foalstand Rigg,SPFSRP_34,78,March-May 2018,361800,572300,560,,Y,,384,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+35,Foalstand Rigg,SPFSRP_35,79,March-May 2018,361900,572300,480,,Y,,386,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+36,Foalstand Rigg,SPFSRP_36,80,March-May 2018,362000,572300,410,,Y,,388,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+37,Foalstand Rigg,SPFSRP_37,81,March-May 2018,362100,572300,370,,Y,,390,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+38,Foalstand Rigg,SPFSRP_38,82,March-May 2018,362200,572300,340,,Y,,392,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+39,Foalstand Rigg,SPFSRP_39,84,March-May 2018,362300,572300,320,,Y,,394,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+40,Foalstand Rigg,SPFSRP_40,86,March-May 2018,362400,572300,270,,Y,,396,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+41,Foalstand Rigg,SPFSRP_41,93,March-May 2018,360800,572250,200,,Y,Young replanted. 10m North is 0cm peat,423,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+42,Foalstand Rigg,SPFSRP_42,95,March-May 2018,360900,572250,0,,Y,Peat boundary at the line of the ditch,425,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+43,Foalstand Rigg,SPFSRP_43,96,March-May 2018,360950,572250,70,,Y,Young replanted. 0cm peat is within 10m upslope to north,426,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+44,Foalstand Rigg,SPFSRP_44,101,March-May 2018,362500,572250,50,,N,Marshy area between plantation and stream.,457,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+45,Foalstand Rigg,SPFSRP_45,110,March-May 2018,360900,572200,480,,Y,Young replanted,484,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+46,Foalstand Rigg,SPFSRP_46,111,March-May 2018,361000,572200,200,,Regen,,486,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+47,Foalstand Rigg,SPFSRP_47,112,March-May 2018,361100,572200,400,,Regen,Edge of replanted block,488,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+48,Foalstand Rigg,SPFSRP_48,114,March-May 2018,361300,572200,420,,Y,Ground slopes gently up to east.,492,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+49,Foalstand Rigg,SPFSRP_49,115,March-May 2018,361400,572200,500,,Y,,494,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+50,Foalstand Rigg,SPFSRP_50,116,March-May 2018,361500,572200,600,,Y,,496,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+51,Foalstand Rigg,SPFSRP_51,118,March-May 2018,361700,572200,500,,Y,Quite spindly trees - easy to walk through.,500,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+52,Foalstand Rigg,SPFSRP_52,119,March-May 2018,361800,572200,520,,Y,,502,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+53,Foalstand Rigg,SPFSRP_53,121,March-May 2018,362000,572200,520,,Y,,506,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+54,Foalstand Rigg,SPFSRP_54,122,March-May 2018,362100,572200,570,,Y,,508,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+55,Foalstand Rigg,SPFSRP_55,123,March-May 2018,362200,572200,620,,Y,,510,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+56,Foalstand Rigg,SPFSRP_56,124,March-May 2018,362300,572200,520,,Y,,512,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+57,Foalstand Rigg,SPFSRP_57,125,March-May 2018,362400,572200,490,,Y,,514,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+58,Foalstand Rigg,SPFSRP_58,126,March-May 2018,362500,572200,210,,Y,,516,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+59,Foalstand Rigg,SPFSRP_59,127,March-May 2018,362550,572200,100,,Y,"50cm peat is 10m to north, peat goes to edge of stream. Edge of forest block",517,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+60,Foalstand Rigg,SPFSRP_60,128,March-May 2018,362600,572200,0,,N,,518,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+61,Foalstand Rigg,SPFSRP_61,129,March-May 2018,362650,572200,0,,N,Beside stream,519,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+62,Foalstand Rigg,SPFSRP_62,132,March-May 2018,362550,572150,0,,Y,Deciduous replanted ,576,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+63,Foalstand Rigg,SPFSRP_63,133,March-May 2018,362600,572150,10,,Y,Deciduous replanted ,577,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+64,Foalstand Rigg,SPFSRP_64,135,March-May 2018,362700,572150,0,,N,Close to tracks,579,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+65,Foalstand Rigg,SPFSRP_65,136,March-May 2018,362750,572150,0,,Y,Deciduous. Quite steep slope down to stream.,580,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+66,Foalstand Rigg,SPFSRP_66,138,March-May 2018,360400,572100,0,,Y,Young replanted. 6m to south is 50cm peat,592,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+67,Foalstand Rigg,SPFSRP_67,144,March-May 2018,360900,572100,650,,Y,Young replanted,602,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+68,Foalstand Rigg,SPFSRP_68,145,March-May 2018,361000,572100,750,,Y,Young replanted. Lots of Vaccinium oxycoccos. Andromeda. Sphagna. ,604,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+69,Foalstand Rigg,SPFSRP_69,147,March-May 2018,361200,572100,600,,Regen,Just outside plantation. Near road.,608,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+70,Foalstand Rigg,SPFSRP_70,148,March-May 2018,361300,572100,340,,Y,,610,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+71,Foalstand Rigg,SPFSRP_71,149,March-May 2018,361400,572100,230,,Y,Sloping,612,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+72,Foalstand Rigg,SPFSRP_72,150,March-May 2018,361500,572100,20,,Regen,,614,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+73,Foalstand Rigg,SPFSRP_73,160,March-May 2018,362500,572100,30,,Y,Deciduous replanted ,634,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+74,Foalstand Rigg,SPFSRP_74,161,March-May 2018,362600,572100,25,,Regen,,636,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+75,Foalstand Rigg,SPFSRP_75,162,March-May 2018,362700,572100,50,,Y,Deciduous replanted ,638,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+76,Foalstand Rigg,SPFSRP_76,163,March-May 2018,362750,572100,40,,Y,Deciduous replanted ,639,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+77,Foalstand Rigg,SPFSRP_77,166,March-May 2018,361150,572050,600,,Regen,Near road,666,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+78,Foalstand Rigg,SPFSRP_78,170,March-May 2018,362750,572050,0,,Regen,,698,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+79,Foalstand Rigg,SPFSRP_79,171,March-May 2018,362800,572050,10,,Regen, Close to track,699,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+80,Foalstand Rigg,SPFSRP_80,172,March-May 2018,360350,572000,220,,N,Close to track which is prob at edge of peat. Peat is 1m deep beside track.  ,709,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+81,Foalstand Rigg,SPFSRP_81,175,March-May 2018,360600,572000,500,,Y,Young replanted,714,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+82,Foalstand Rigg,SPFSRP_82,176,March-May 2018,360700,572000,500,,Y,Young replanted,716,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+83,Foalstand Rigg,SPFSRP_83,177,March-May 2018,360800,572000,720,Firmer after 5m,Y,Young replanted,718,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+84,Foalstand Rigg,SPFSRP_84,178,March-May 2018,360900,572000,750,,Y,Young replanted.  To south the track has obliterated the edge of the peatland ,720,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+85,Foalstand Rigg,SPFSRP_85,179,March-May 2018,361000,572000,520,,Regen,,722,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+86,Foalstand Rigg,SPFSRP_86,181,March-May 2018,361100,572000,420,,Regen,,724,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+87,Foalstand Rigg,SPFSRP_87,183,March-May 2018,361200,572000,430,,Y,,726,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+88,Foalstand Rigg,SPFSRP_88,185,March-May 2018,361300,572000,420,,Y,,728,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+89,Foalstand Rigg,SPFSRP_89,187,March-May 2018,361400,572000,290,,Y,,730,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+90,Foalstand Rigg,SPFSRP_90,188,March-May 2018,361500,572000,120,,N,Swampy lagg near stream. Some regen,732,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+91,Foalstand Rigg,SPFSRP_91,189,March-May 2018,362800,572000,220,,Regen,,758,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+92,Foalstand Rigg,SPFSRP_92,190,March-May 2018,362850,572000,70,,Y,Deciduous replanted. 5m to north is 0cm peat,759,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+93,Foalstand Rigg,SPFSRP_93,194,March-May 2018,361000,571950,40,,Regen,Peat edge is at the track,781,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+94,Foalstand Rigg,SPFSRP_94,195,March-May 2018,361050,571950,70,Edge is at the track,Regen,,782,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+95,Foalstand Rigg,SPFSRP_95,196,March-May 2018,361100,571950,0,50+ cm only a few metres to north,Regen,,783,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+96,Foalstand Rigg,SPFSRP_96,198,March-May 2018,361400,571950,150,,Y,"Edge of block, close to track",789,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+97,Foalstand Rigg,SPFSRP_97,199,March-May 2018,361450,571950,80,,Y,,790,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+98,Foalstand Rigg,SPFSRP_98,200,March-May 2018,362800,571950,120,,Regen,,817,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+99,Foalstand Rigg,SPFSRP_99,202,March-May 2018,360400,571900,300,,Y,Deciduous planting zone,828,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+100,Foalstand Rigg,SPFSRP_100,205,March-May 2018,360600,571900,260,,Y,Young replanted,832,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+101,Foalstand Rigg,SPFSRP_101,206,March-May 2018,360700,571900,390,,Y,Young replanted,834,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+102,Foalstand Rigg,SPFSRP_102,207,March-May 2018,360800,571900,220,,N,Edge of block,836,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+103,Foalstand Rigg,SPFSRP_103,208,March-May 2018,360850,571900,140,10m to south is 0cm.,Y,,837,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+104,Foalstand Rigg,SPFSRP_104,212,March-May 2018,361400,571900,15,,Y ,Edge of block,848,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+105,Foalstand Rigg,SPFSRP_105,213,March-May 2018,361450,571900,110,,Y,,849,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+106,Foalstand Rigg,SPFSRP_106,214,March-May 2018,361500,571900,160,,Y,Edge of block,850,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+107,Foalstand Rigg,SPFSRP_107,216,March-May 2018,362800,571900,30,,Regen,,876,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+108,Foalstand Rigg,SPFSRP_108,219,March-May 2018,360750,571850,0,Lots of brash,Y,,894,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+109,Foalstand Rigg,SPFSRP_109,223,March-May 2018,361400,571850,30,,Y,,907,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+110,Foalstand Rigg,SPFSRP_110,224,March-May 2018,361450,571850,120,,Y,,908,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+111,Foalstand Rigg,SPFSRP_111,225,March-May 2018,361500,571850,140,,Y,,909,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+112,Foalstand Rigg,SPFSRP_112,229,March-May 2018,360450,571800,200,,Y ,Mound - possibly piled up. Failed deciduous planting,947,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+113,Foalstand Rigg,SPFSRP_113,230,March-May 2018,360500,571800,160,,Y,Replanted. Edge of block,948,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+114,Foalstand Rigg,SPFSRP_114,232,March-May 2018,360700,571800,0,,,,952,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+115,Foalstand Rigg,SPFSRP_115,235,March-May 2018,361550,571800,25,,N,Beside stream,969,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+116,Foalstand Rigg,SPFSRP_116,236,March-May 2018,362800,571800,10,,Regen,,994,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+117,Foalstand Rigg,SPFSRP_117,238,March-May 2018,362900,571800,10,,Regen,,996,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+118,Foalstand Rigg,SPFSRP_118,240,March-May 2018,360450,571750,280,,N,Large cut stumps. Edge of forest block,1006,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+119,Foalstand Rigg,SPFSRP_119,241,March-May 2018,360500,571750,320,,Y,,1007,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+120,Foalstand Rigg,SPFSRP_120,242,March-May 2018,360650,571750,0,,Y,On slope rising to the south,1010,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+121,Foalstand Rigg,SPFSRP_121,243,March-May 2018,360700,571750,0,,Y,,1011,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+122,Foalstand Rigg,SPFSRP_122,246,March-May 2018,362900,571750,30,,Regen,,1055,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+123,Foalstand Rigg,SPFSRP_123,247,March-May 2018,362950,571750,45,,Regen,,1056,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+124,Foalstand Rigg,SPFSRP_124,249,March-May 2018,363050,571750,0,,Regen,,1058,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+125,Foalstand Rigg,SPFSRP_125,250,March-May 2018,363100,571750,30,,Regen,,1059,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+126,Foalstand Rigg,SPFSRP_126,252,March-May 2018,360500,571700,0,Made ground ,N,,1066,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+127,Foalstand Rigg,SPFSRP_127,253,March-May 2018,360550,571700,0,Made ground ,N,,1067,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+128,Foalstand Rigg,SPFSRP_128,254,March-May 2018,360600,571700,0,,N,,1068,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+129,Foalstand Rigg,SPFSRP_129,255,March-May 2018,360650,571700,0,,Y,Edge,1069,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+130,Foalstand Rigg,SPFSRP_130,259,March-May 2018,363000,571700,20,,Regen,,1116,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+131,Foalstand Rigg,SPFSRP_131,260,March-May 2018,363050,571700,20,,Regen,,1117,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+132,Foalstand Rigg,SPFSRP_132,262,March-May 2018,363150,571700,0,,Regen,,1119,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+133,Foalstand Rigg,SPFSRP_133,263,March-May 2018,360550,571650,0,Disturbed,Regen,,1126,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+134,Foalstand Rigg,SPFSRP_134,264,March-May 2018,360600,571650,0,,Regen,,1127,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+135,Foalstand Rigg,SPFSRP_135,265,March-May 2018,360650,571650,0,,N,Edge,1128,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+136,Foalstand Rigg,SPFSRP_136,266,March-May 2018,361500,571650,90,,N,Edge,1145,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+137,Foalstand Rigg,SPFSRP_137,267,March-May 2018,361550,571650,200,,N,Top of slope down to stream. Possibly disturbed,1146,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+138,Foalstand Rigg,SPFSRP_138,279,March-May 2018,362000,571600,0,,Y,20 m to west is 25 cm peat. Replanted,1214,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+139,Foalstand Rigg,SPFSRP_139,285,March-May 2018,362400,571600,190,,Regen,Regeneration amongst fallen trees,1222,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+140,Foalstand Rigg,SPFSRP_140,286,March-May 2018,363100,571600,100,,Y,"Within deer fence, near edge of block",1236,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+141,Foalstand Rigg,SPFSRP_141,287,March-May 2018,363150,571600,60,,Y,"Within deer fence, near edge of block",1237,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+142,Foalstand Rigg,SPFSRP_142,288,March-May 2018,363200,571600,90,,Y,Within deer fence,1238,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+143,Foalstand Rigg,SPFSRP_143,299,March-May 2018,363100,571550,200,,Y,Quite open area within forest block inside deer fence,1295,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+144,Foalstand Rigg,SPFSRP_144,300,March-May 2018,363150,571550,180,,Regen,Open area within forest block inside deer fence,1296,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+145,Foalstand Rigg,SPFSRP_145,308,March-May 2018,361800,571500,0,,Y,,1328,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+146,Foalstand Rigg,SPFSRP_146,317,March-May 2018,362350,571500,0,On clay,Regen,,1339,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+147,Foalstand Rigg,SPFSRP_147,318,March-May 2018,362400,571500,260,,Regen,Regeneration amongst fallen trees,1340,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+148,Foalstand Rigg,SPFSRP_148,319,March-May 2018,362900,571500,250,,Y,Within deer fence. Open canopy (+ regen?) with large mounds of Sphagna etc. Trees could be harvested easily ,1350,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+149,Foalstand Rigg,SPFSRP_149,321,March-May 2018,363000,571500,160,,Regen,Open area within forest block inside deer fence. ,1352,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+150,Foalstand Rigg,SPFSRP_150,323,March-May 2018,363100,571500,60,,Y,Within deer fence,1354,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+151,Foalstand Rigg,SPFSRP_151,324,March-May 2018,363150,571500,30,,Y,Within deer fence,1355,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+152,Foalstand Rigg,SPFSRP_152,338,March-May 2018,362800,571450,150,,Y,Within deer fence. Open canopy + regen,1407,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+153,Foalstand Rigg,SPFSRP_153,340,March-May 2018,362900,571450,10,,Y,Within deer fence. 10m north on ride is 80 cm peat.  ,1409,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+154,Foalstand Rigg,SPFSRP_154,342,March-May 2018,363000,571450,60,,Y,Just inside deer fence on edge of forest block,1411,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+155,Foalstand Rigg,SPFSRP_155,343,March-May 2018,363050,571450,70,,Y,Within deer fence,1412,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+156,Foalstand Rigg,SPFSRP_156,344,March-May 2018,363100,571450,20,,Y,Just inside deer fence on edge of forest block,1413,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+157,Foalstand Rigg,SPFSRP_157,348,March-May 2018,362400,571400,200,,Regen,,1458,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+158,Foalstand Rigg,SPFSRP_158,351,March-May 2018,362700,571400,50,,Regen,Beside deer fence,1464,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+159,Foalstand Rigg,SPFSRP_159,355,March-May 2018,362900,571400,10,,Y,"Edge of forest block, inside deer fence ",1468,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+160,Foalstand Rigg,SPFSRP_160,358,March-May 2018,362500,571350,10,,Regen,,1519,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+161,Foalstand Rigg,SPFSRP_161,360,March-May 2018,362600,571350,15,,Regen,,1521,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+162,Foalstand Rigg,SPFSRP_162,364,March-May 2018,362600,572000,240,,Regen,,,11,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+163,Foalstand Rigg,SPFSRP_163,367,March-May 2018,362600,571900,250,,Y,"Dense natural regeneration amongst dense brash, almost impenetrable!",,27,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+164,Foalstand Rigg,SPFSRP_164,369,March-May 2018,361600,571800,200,,Regen,,,33,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+165,Foalstand Rigg,SPFSRP_165,370,March-May 2018,361700,571800,400,,Regen,,,34,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+166,Foalstand Rigg,SPFSRP_166,371,March-May 2018,361800,571800,700,,Regen,,,35,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+167,Foalstand Rigg,SPFSRP_167,372,March-May 2018,361900,571800,900,,Y,Within and close to edge of planted area. Some wind blown. + regen,,36,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+168,Foalstand Rigg,SPFSRP_168,373,March-May 2018,362600,571400,210,,Regen, 50 cm peat is about 35 m south. ,,107,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+169,Foalstand Rigg,SPFSRP_169,374,March-May 2018,362000,571800,1000,,Regen,Edge of dense brash/regen area.,,37,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+170,Foalstand Rigg,SPFSRP_170,375,March-May 2018,362100,571800,800,,Regen,Within felled strip. Dense brash and regen to north and south.,,38,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+171,Foalstand Rigg,SPFSRP_171,376,March-May 2018,362200,571800,580,,Y,Just within area of dense regeneration over dense brash and hanging deadwood - not harvestable! 10 m east is open ride ,,39,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+172,Foalstand Rigg,SPFSRP_172,377,March-May 2018,362300,571800,450,,Y,"Edge of point 378 area, dense regen and brash etc. ",,40,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+173,Foalstand Rigg,SPFSRP_173,378,March-May 2018,362400,571800,350,,Y,Dense regeneration over dense brash and hanging deadwood - not harvestable! 50 m south is edge of cleared ground. Much brash there too,,41,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+174,Foalstand Rigg,SPFSRP_174,380,March-May 2018,362600,571800,180,,Y,Dense regeneration over dense brash and hanging deadwood - not harvestable!,,43,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+175,Foalstand Rigg,SPFSRP_175,381,March-May 2018,362700,571800,10,,Regen,,,44,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+176,Foalstand Rigg,SPFSRP_176,E1,March-May 2018,360700,571850,130,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+177,Foalstand Rigg,SPFSRP_177,E2,March-May 2018,360801,571885,50,,Y,Sharp edge to peat body. 3m south is 0cm. Edge of forest block,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+178,Foalstand Rigg,SPFSRP_178,E3,March-May 2018,360898,571916,0,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+179,Foalstand Rigg,SPFSRP_179,E4,March-May 2018,360600,571820,0,,Y,5m to the north is peat >50 cm deep,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+180,Foalstand Rigg,SPFSRP_180,E6,March-May 2018,360597,572317,0,,Y,5m to south is +50cm peat,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+181,Foalstand Rigg,SPFSRP_181,E7,March-May 2018,360501,572329,70,,Y,5m to north is 0cm,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+182,Foalstand Rigg,SPFSRP_182,E8,March-May 2018,360402,572314,15,,Y,Young replanted. 5m to north is 0cm,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+183,Foalstand Rigg,SPFSRP_183,E9,March-May 2018,360398,572277,0,,Y,Young replanted. On a continuation of the ridge with some shallow pockets of peat ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+184,Foalstand Rigg,SPFSRP_184,E10,March-May 2018,360401,572158,50,,Y,Young replanted. 5m to north is 0cm ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+185,Foalstand Rigg,SPFSRP_185, E11,March-May 2018,360399,572119,0,,Y,Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+186,Foalstand Rigg,SPFSRP_186,E12,March-May 2018,360435,572131,110,,Y,Young replanted. 10m to West is 0 cm peat.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+187,Foalstand Rigg,SPFSRP_187,E13,March-May 2018,360352,572060,100,,Y,Young replanted. 5m to north is 0 cm peat. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+188,Foalstand Rigg,SPFSRP_188,E14,March-May 2018,360371,571897,150,,N,Beside track,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+189,Foalstand Rigg,SPFSRP_189,E15,March-May 2018,361799,572083,0,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+190,Foalstand Rigg,SPFSRP_190,E16,March-May 2018,361800,572000,430,,Regen,Regen has been cut. 100 cm peat close to road to north.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+191,Foalstand Rigg,SPFSRP_191,E17,March-May 2018,361800,571900,700,,Regen,Regen has been cut. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+192,Foalstand Rigg,SPFSRP_192,E18,March-May 2018,361800,571700,520,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+193,Foalstand Rigg,SPFSRP_193,E19,March-May 2018,361800,571600,140,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+194,Foalstand Rigg,SPFSRP_194,E20,March-May 2018,361798,571584,0,,Regen,50cm peat within 2m to north,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+195,Foalstand Rigg,SPFSRP_195,E21,March-May 2018,361699,571585,150,,N,Lagg zone below mineral ridge. 0cm c. 6m to south. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+196,Foalstand Rigg,SPFSRP_196,E22,March-May 2018,361538,571648,0,,Regen,Close to stream,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+197,Foalstand Rigg,SPFSRP_197,E23,March-May 2018,361528,571795,45,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+198,Foalstand Rigg,SPFSRP_198,E24,March-May 2018,361500,571800,10,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+199,Foalstand Rigg,SPFSRP_199,E25,March-May 2018,361527,571848,30,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+200,Foalstand Rigg,SPFSRP_200,E26,March-May 2018,361450,571800,0,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+201,Foalstand Rigg,SPFSRP_201,E27,March-May 2018,361350,571850,10,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+202,Foalstand Rigg,SPFSRP_202,E28,March-May 2018,361197,572425,50,,Y,Zero peat within 5m to north. Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+203,Foalstand Rigg,SPFSRP_203,E29,March-May 2018,361153,572437,0,,Y,50cm peat within 3m to south. Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+204,Foalstand Rigg,SPFSRP_204,E30,March-May 2018,361051,572471,20,,Y,Partly replanted. Beside tall GL fence. 50cm is c. 10m south,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+205,Foalstand Rigg,SPFSRP_205,E31,March-May 2018,360996,572465,10,,Y,Partly replanted. Beside tall GL fence. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+206,Foalstand Rigg,SPFSRP_206,E32,March-May 2018,360996,572424,80,,Y,Partly replanted,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+207,Foalstand Rigg,SPFSRP_207,E33,March-May 2018,360996,572384,0,,Y,Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+208,Foalstand Rigg,SPFSRP_208,E34,March-May 2018,361050,572300,130,,N,N - between two replanted blocks,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+209,Foalstand Rigg,SPFSRP_209,E35,March-May 2018,360947,572221,200,,Y,Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+210,Foalstand Rigg,SPFSRP_210,E36,March-May 2018,361150,572100,600,,Regen,Brash. Close to road,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+211,Foalstand Rigg,SPFSRP_211,E37,March-May 2018,361190,572203,380,,Regen,Close to road,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+212,Foalstand Rigg,SPFSRP_212,E38,March-May 2018,361150,572300,120,,Y,Young replanted ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+213,Foalstand Rigg,SPFSRP_213,E39,March-May 2018,361250,572300,250,,Regen,Between road and forest,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+214,Foalstand Rigg,SPFSRP_214,E40,March-May 2018,362591,572029,50,,Regen,0 cm peat is 5m to north in lagg zone at base of slope,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+215,Foalstand Rigg,SPFSRP_215,e41,March-May 2018,362748,572026,70,,N,0 cm peat is 5m to north,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+216,Foalstand Rigg,SPFSRP_216,E42,March-May 2018,362870,571990,50,,Y,Deciduous. 0cm is 10m to east.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+217,Foalstand Rigg,SPFSRP_217,E43,March-May 2018,362859,571956,10,,Y,Deciduous replanted.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+218,Foalstand Rigg,SPFSRP_218,E44,March-May 2018,362826,571947,70,,Regen,50cm is 5m to east,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+219,Foalstand Rigg,SPFSRP_219,E45,March-May 2018,362850,571900,50,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+220,Foalstand Rigg,SPFSRP_220,E46,March-May 2018,362900,571900,20,,Y,Deciduous replanted. 0 cm peat is 20m east at top of slope down to stream. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+221,Foalstand Rigg,SPFSRP_221,E47,March-May 2018,362950,571850,70,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+222,Foalstand Rigg,SPFSRP_222,E48,March-May 2018,363050,571850,25,,Regen,Narrow strip of 50cm peat along ridge,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+223,Foalstand Rigg,SPFSRP_223,E49,March-May 2018,363050,571869,0,,Y,Deciduous replanted.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+224,Foalstand Rigg,SPFSRP_224,E50,March-May 2018,363150,571850,50,,Regen,50m west is also 50cm,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+225,Foalstand Rigg,SPFSRP_225,E51,March-May 2018,363185,571845,0,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+226,Foalstand Rigg,SPFSRP_226,E52,March-May 2018,363200,571800,0,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+227,Foalstand Rigg,SPFSRP_227,E53,March-May 2018,363200,571750,0,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+228,Foalstand Rigg,SPFSRP_228,E55,March-May 2018,362980,571691,50,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+229,Foalstand Rigg,SPFSRP_229,E56,March-May 2018,362936,571671,200,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+230,Foalstand Rigg,SPFSRP_230,E57,March-May 2018,362726,571795,50,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+231,Foalstand Rigg,SPFSRP_231,E58,March-May 2018,362650,571800,50,,Regen,Edge of forest block,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+232,Foalstand Rigg,SPFSRP_232,E59,March-May 2018,362750,571750,260,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+233,Foalstand Rigg,SPFSRP_233,E60,March-May 2018,362700,571700,320,,Y,Edge of forest block,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+234,Foalstand Rigg,SPFSRP_234,E61,March-May 2018,362700,571600,440,,Y,Edge of forest block,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+235,Foalstand Rigg,SPFSRP_235,E62,March-May 2018,362700,571500,500,,Y,Close to gate in 2m high deer fence to south,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+236,Foalstand Rigg,SPFSRP_236,E63,March-May 2018,362700,571450,350,,Y,Close to deer fence,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+237,Foalstand Rigg,SPFSRP_237,E64,March-May 2018,362698,571424,200,,Regen,Edge of unmanageable forest block. Deer fence to east encloses managed forest. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+238,Foalstand Rigg,SPFSRP_238,E65,March-May 2018,362699,571365,0,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+239,Foalstand Rigg,SPFSRP_239,E66,March-May 2018,362798,571366,0,,N,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+240,Foalstand Rigg,SPFSRP_240,E67,March-May 2018,363201,571632,0,,Y,"Within deer fence. Near edge of block, sloping down to stream ",,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+241,Foalstand Rigg,SPFSRP_241,E68,March-May 2018,363250,571600,0,,Y,Within deer fence. About 50cm c. 10m to west.  ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+242,Foalstand Rigg,SPFSRP_242,E69,March-May 2018,363222,571568,80,,Y,"Within deer fence. Canopy quite open throughout block, with large mounds of bryos incl Sphagna ",,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+243,Foalstand Rigg,SPFSRP_243,E70,March-May 2018,363250,571550,30,,N,Open area between forest block and deer fence,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+244,Foalstand Rigg,SPFSRP_244,E71,March-May 2018,363200,571500,10,,Y,Within deer fence.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+245,Foalstand Rigg,SPFSRP_245,E72,March-May 2018,362997,571520,220,,Y,Within deer fence. Canopy quite open. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+246,Foalstand Rigg,SPFSRP_246,E73,March-May 2018,362800,571426,10,,Y,Within deer fence. Denser canopy than to north,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+247,Foalstand Rigg,SPFSRP_247,E74,March-May 2018,361200,571950,170,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+248,Foalstand Rigg,SPFSRP_248,E75,March-May 2018,361201,571924,0,,Y,Road probably marks edge of peat body here.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+249,Foalstand Rigg,SPFSRP_249,E76,March-May 2018,361300,571950,250,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+250,Foalstand Rigg,SPFSRP_250,E77,March-May 2018,361483,572095,180,,Regen,Edge of felled area,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+251,Foalstand Rigg,SPFSRP_251,E78,March-May 2018,361500,572150,90,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+252,Foalstand Rigg,SPFSRP_252,E79,March-May 2018,361600,572150,15,,Regen,10m to north is 50cm peat. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+253,Foalstand Rigg,SPFSRP_253,E80,March-May 2018,361602,572179,200,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+254,Foalstand Rigg,SPFSRP_254,E81,March-May 2018,361515,572437,0,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+255,Foalstand Rigg,SPFSRP_255,E82,March-May 2018,361504,572420,50,,Y,0 cm peat within 10 m to the north.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+256,Foalstand Rigg,SPFSRP_256,E83,March-May 2018,361401,572414,0,,Y,50 cm peat is 10 m south,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+257,Foalstand Rigg,SPFSRP_257,E84,March-May 2018,361304,572420,0,,Y,Deciduous planting between conifers and road.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+258,Foalstand Rigg,SPFSRP_258,E85,March-May 2018,362499,571369,50,,Regen,10 m north is 200 cm peat.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+259,Foalstand Rigg,SPFSRP_259,E86,March-May 2018,362500,571500,220,,Regen,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+260,Foalstand Rigg,SPFSRP_260,E87,March-May 2018,362500,571600,500,,Impenetrable regen fallen trees on bog,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+261,Foalstand Rigg,SPFSRP_261,E88,March-May 2018,362365,571500,50,,Regen,Close to lagg stream,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+262,Foalstand Rigg,SPFSRP_262,E89,March-May 2018,362369,571611,0,,Regen,50 cm peat is 5 m to east.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+263,Foalstand Rigg,SPFSRP_263,E90,March-May 2018,362400,571700,220,,Regen,On felled ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+264,Foalstand Rigg,SPFSRP_264,E91,March-May 2018,362300,571700,130,,Regen,Felled. 50 cm peat is 20 m south. 0 cm is 25 m south just past the small lagg stream. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+265,Foalstand Rigg,SPFSRP_265,E92,March-May 2018,362200,571700,160,,Regen,50 cm peat is 10 m south. 0 cm peat is 20 m south. Lagg stream at about 15 m.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+266,Foalstand Rigg,SPFSRP_266,E93,March-May 2018,362101,571674,0,,Regen," 5 m north to 50 cm peat, in lagg zone. ",,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+267,Foalstand Rigg,SPFSRP_267,E94,March-May 2018,362100,571700,200,,Y,Within area of fallen trees and regen,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+268,Foalstand Rigg,SPFSRP_268,E95,March-May 2018,362000,571650,0,,Regen,Felled. 5 m to north is 50 cm peat. Edge of dense brashy/ felled/fallen/ regen area. Cleared to the west.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+269,Foalstand Rigg,SPFSRP_269,E96,March-May 2018,361900,571622,0,,Lagg zone,50 cm peat is 5 m north. Some brash + regen. 150 cm peat is 10 m to north. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+270,Foalstand Rigg,SPFSRP_270,E97,March-May 2018,361700,572150,10,,Regen, felled. Cuckoo,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+271,Foalstand Rigg,SPFSRP_271,E98,March-May 2018,361702,572166,50,,Regen,Felled. 10 m north is 200 cm peat. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+272,Foalstand Rigg,SPFSRP_272,E99,March-May 2018,361705,572369,50,,Y,Sloping down to north. 0 cm peat is 10 m to north.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+273,Foalstand Rigg,SPFSRP_273,E100,March-May 2018,361900,572156,50,,N,10 m to north is 200 cm peat. Non-planted strip between felled ridge and plantation. ,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+274,Foalstand Rigg,SPFSRP_274,E101,March-May 2018,361798,572163,50,,N,10 m north is 200 cm peat.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+275,Foalstand Rigg,SPFSRP_275,E102,March-May 2018,361803,572369,50,,Y,5 m north is 0 cm.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+276,Foalstand Rigg,SPFSRP_276,E103,March-May 2018,362100,572350,0,,Y,,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+277,Foalstand Rigg,SPFSRP_277,E104,March-May 2018,362200,572342,60,,Y,Top of bank dropping steeply into stream. 0 cm peat is about 2 m north.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+278,Foalstand Rigg,SPFSRP_278,E105,March-May 2018,362500,572179,50,,N,Rushy strip between road and plantation.,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+279,Foalstand Rigg,SPFSRP_279,E106,March-May 2018,362401,572139,50,,N,Rushy,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+280,Foalstand Rigg,SPFSRP_280,E107,March-May 2018,362200,572128,120,,N,End of ridge going west,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+281,Foalstand Rigg,SPFSRP_281,E108,March-May 2018,362100,572150,120,,N,Unplanted strip,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018
+282,Foalstand Rigg,SPFSRP_282,E109,March-May 2018,362000,572150,70,,Regen,Felled,,,Phil Eades & Sue Shaw,Phil Eades,10/06/2018

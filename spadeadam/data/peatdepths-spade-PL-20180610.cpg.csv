@@ -1,0 +1,95 @@
+﻿Grid pt,Site,GIS_ID,Original grid pt,Date,Easting,Northing,Peat depth (cm),Soil notes,Forested? (Y/N),Other notes
+1,Prior Lancy,SPPL_1,1,March 2018,360000,571950,0,Made ground,N,
+2,Prior Lancy,SPPL_2,2,March 2018,360000,571850,130,Edge of lagg,N,
+3,Prior Lancy,SPPL_3,3,March 2018,360000,571750,300,,N,
+4,Prior Lancy,SPPL_4,4,March 2018,360000,571650,160,,N,
+5,Prior Lancy,SPPL_5,5,March 2018,360000,571550,1000,Felt firmer after about 850cm but no grit or grinding. Could be peat + some soft sediment.,Regen,Bottom not reached
+6,Prior Lancy,SPPL_6,6,March 2018,359400,571650,120,Layers of silt and woody peat,N,
+7,Prior Lancy,SPPL_7,7,March 2018,359500,571650,220,,N,
+8,Prior Lancy,SPPL_8,8,March 2018,359600,571650,650,,Regen,Molinia abundant near edge of bog
+9,Prior Lancy,SPPL_9,9,March 2018,359700,571650,540,,N,
+10,Prior Lancy,SPPL_10,10,March 2018,359800,571650,450,,N,
+11,Prior Lancy,SPPL_11,11,March 2018,359900,571650,400,,N,
+12,Prior Lancy,SPPL_12,12,March 2018,360100,571650,170,,N,
+13,Prior Lancy,SPPL_13,13,March 2018,360200,571650,0,Thin mineral layer over clay,Regen,
+14,Prior Lancy,SPPL_14,14,March 2018,360300,571650,170,,Regen,
+15,Prior Lancy,SPPL_15,15,March 2018,360400,571650,0,Thin organic layer,N,
+16,Prior Lancy,SPPL_16,16,March 2018,359300,571300,15,,N,
+17,Prior Lancy,SPPL_17,17,March 2018,359300,571250,20,,N,
+18,Prior Lancy,SPPL_18,19,March 2018,359350,571200,60,,Y,
+19,Prior Lancy,SPPL_19,20,March 2018,359350,571250,30,,Y,
+20,Prior Lancy,SPPL_20,21,March 2018,359350,571300,10,,Y,
+21,Prior Lancy,SPPL_21,22,March 2018,359400,571300,30,,Y,
+22,Prior Lancy,SPPL_22,23,March 2018,359400,571250,25,,Y,Clearing
+23,Prior Lancy,SPPL_23,24,March 2018,359400,571200,80,,Y,
+24,Prior Lancy,SPPL_24,28,March 2018,359500,571250,20,,Y,Just south of raised trackway ( rock based) + 2 trucks 
+25,Prior Lancy,SPPL_25,29,March 2018,359500,571200,10,,Y,
+26,Prior Lancy,SPPL_26,30,March 2018,359500,571150,20,,Y,
+27,Prior Lancy,SPPL_27,34,March 2018,359600,571150,30,,Y,
+28,Prior Lancy,SPPL_28,35,March 2018,359600,571200,30,,Y,Slopes down quite steeply to south
+29,Prior Lancy,SPPL_29,36,March 2018,359600,571250,15,,Y,
+30,Prior Lancy,SPPL_30,51,March 2018,359850,571450,0,Clay,Y,
+31,Prior Lancy,SPPL_31,54,March 2018,359900,571450,0,Clay,Y,
+32,Prior Lancy,SPPL_32,60,March 2018,360050,571450,0,,N,Near planted broadleaves. On slope below forest
+33,Prior Lancy,SPPL_33,62,March 2018,360100,571450,0,,N,Base of ridge next to big drain. Clay in the drain. 30cm peat 2m on north side of drain = About 7m north of point 62.
+34,Prior Lancy,SPPL_34,64,March 2018,360150,571450,0,,N,Base of ridge next to big drain
+35,Prior Lancy,SPPL_35,65,March 2018,360200,571450,0,,N,Ridge. Next to drain. 5m north = edge of peat. 7m north = 50 cm peat. 
+36,Prior Lancy,SPPL_36,68,March 2018,360250,571450,0,,N,"Ridge, Molinia grassland, gripped. North of drain stream, shallow peat quickly deepens"
+37,Prior Lancy,SPPL_37,70,March 2018,360300,571500,0,Gritty clay,N,Edge of artificial basin structure.
+38,Prior Lancy,SPPL_38,71,March 2018,360300,571550,0,,N,
+39,Prior Lancy,SPPL_39,78,March 2018,360450,571550,0,,N,
+40,Prior Lancy,SPPL_40,80,March 2018,360500,571550,0,,N,
+41,Prior Lancy,SPPL_41,81,March 2018,360500,571600,0,,N,
+42,Prior Lancy,SPPL_42,82,March 2018,360550,571600,80,,N,
+43,Prior Lancy,SPPL_43,84,March 2018,360600,571550,0,,Y,
+44,Prior Lancy,SPPL_44,85,March 2018,360600,571600,40,,Y,
+45,Prior Lancy,SPPL_45,86,March 2018,360650,571600,100,,Y,
+46,Prior Lancy,SPPL_46,87,March 2018,360650,571550,0,,Y,
+47,Prior Lancy,SPPL_47,88,March 2018,359600,571550,750,,N,"Just west of top of dome, start of furrowed area "
+48,Prior Lancy,SPPL_48,89,March 2018,359600,571450,560,,N,Furrowed area
+49,Prior Lancy,SPPL_49,90,March 2018,359600,571350,260,,N,Furrowed area
+50,Prior Lancy,SPPL_50,E1,March 2018,359900,571497,0,Wet mineral soil over clay,Regen,Edge of forest
+51,Prior Lancy,SPPL_51,E2,March 2018,359901,571532,80,,Regen,"Edge of forest, 30cm depth only 10m to south"
+52,Prior Lancy,SPPL_52,E3,March 2018,359951,571499,0,,Regen,Some planted broadleaves nearby but many failed
+53,Prior Lancy,SPPL_53,E4,March 2018,359949,571506,10,,Regen,Start of peat at edge of ridge. 7m north = 50 cm peat.
+54,Prior Lancy,SPPL_54,E5,March 2018,359997,571497,50,,N,Broadleaves planted nearby. 0 peat is 4m upslope to south
+55,Prior Lancy,SPPL_55,E6,March 2018,360051,571469,10,,N,Lagg? 2m north = 50cm peat
+56,Prior Lancy,SPPL_56,E7,March 2018,360248,571498,230,,N,
+57,Prior Lancy,SPPL_57,E8,March 2018,360250,571596,0,Soil over clay and gravel,Regen,
+58,Prior Lancy,SPPL_58,E9,March 2018,360301,571598,0,,Regen,Old felling
+59,Prior Lancy,SPPL_59,E10,March 2018,360298,571611,20,,Regen,10m north = 50cm peat. Old felling.
+60,Prior Lancy,SPPL_60,E11,March 2018,360345,571631,50,Peat thins to 0cm eastwards to edge of stream valley. ,N,Old felling
+61,Prior Lancy,SPPL_61,E12,March 2018,360007,571879,0,50cm clay over stone. Lagg area.,N,
+62,Prior Lancy,SPPL_62,E13,March 2018,359450,571647,260,,N,Close to edge of bog
+63,Prior Lancy,SPPL_63,E14,March 2018,359388,571648,0,Clay,N,
+64,Prior Lancy,SPPL_64,E15,March 2018,359599,571272,15,,Y,On south side of raised trackway
+65,Prior Lancy,SPPL_65,E16,March 2018,359598,571099,30,,Y,
+66,Prior Lancy,SPPL_66,E17,March 2018,359503,571099,25,,Y,
+67,Prior Lancy,SPPL_67,E18,March 2018,359499,571299,30,,N,
+68,Prior Lancy,SPPL_68,E19,March 2018,359495,571336,90,,N,
+69,Prior Lancy,SPPL_69,E20,March 2018,359500,571322,30,,N,
+70,Prior Lancy,SPPL_70,E21,March 2018,359449,571348,60,,N,
+71,Prior Lancy,SPPL_71,E22,March 2018,359450,571324,100,,N,
+72,Prior Lancy,SPPL_72,E23,March 2018,359401,571351,40,,N,5m North is 50cm deep
+73,Prior Lancy,SPPL_73,E24,March 2018,359399,571147,25,,Y,
+74,Prior Lancy,SPPL_74,E25,March 2018,359348,571149,25,,Y,
+75,Prior Lancy,SPPL_75,E26,March 2018,359316,571203,10,,N,
+76,Prior Lancy,SPPL_76,E27,March 2018,359320,571252,15,,N,
+77,Prior Lancy,SPPL_77,E28,March 2018,359349,571349,50,,N,
+78,Prior Lancy,SPPL_78,E29,March 2018,359850,571500,130,,Y,
+79,Prior Lancy,SPPL_79,E30,March 2018,359850,571490,100,,Y,
+80,Prior Lancy,SPPL_80,E31,March 2018,359797,571479,90,,Y,
+81,Prior Lancy,SPPL_81,E32,March 2018,359799,571453,0,,Y,
+82,Prior Lancy,SPPL_82,E33,March 2018,359750,571500,370,,N,"furrowed, former forest"
+83,Prior Lancy,SPPL_83,E34,March 2018,359749,571450,0,,Y,
+84,Prior Lancy,SPPL_84,E35,March 2018,359749,571400,0,,Y,
+85,Prior Lancy,SPPL_85,E36,March 2018,359699,571449,220,,N,"furrowed, former forest"
+86,Prior Lancy,SPPL_86,E37,March 2018,359699,571400,40,,Y,Edge of forest
+87,Prior Lancy,SPPL_87,E38,March 2018,359700,571380,0,,Y,
+88,Prior Lancy,SPPL_88,E39,March 2018,359649,571350,250,,N,Edge of forest
+89,Prior Lancy,SPPL_89,E40,March 2018,359651,571313,50,,Y,
+90,Prior Lancy,SPPL_90,E41,March 2018,359649,571299,0,,Y,
+91,Prior Lancy,SPPL_91,E42,March 2018,360649,571584,25,,Y,On slope up to south
+92,Prior Lancy,SPPL_92,E43,March 2018,359950,571600,350,,N,
+93,Prior Lancy,SPPL_93,E44,March 2018,360050,571550,120,,N,
+94,Prior Lancy,SPPL_94,E45,March 2018,360100,571550,160,,N,
