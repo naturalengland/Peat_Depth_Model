@@ -5,12 +5,18 @@ rsq <- function(observed, predicted) {
 }
 
 rsq.adj <- function(observed, predicted, n.predictors, df.int = 0) {
+<<<<<<< HEAD
   r.squared = rsq(observed, predicted)
   #adj.r.squared <- 1 - (1 - r.squared) * ((n - df.int)/rdf)
   #df.int is 1 if there is an intercept, 0 if not, rdf is residual degrees of freedom
   adj.r.squared <- 1 - 
     (1 - r.squared) * ((length(observed) - df.int)/(length(observed)-n.predictors-1))
   return(adj.r.squared)
+=======
+    1 - 
+    (1 - rsq(observed, predicted)) * 
+    ((length(observed) - df.int)/(length(observed)-n.predictors-1))
+>>>>>>> master
 }
 
 rmse <- function(observed, predicted) {

@@ -1,0 +1,364 @@
+---
+title: "Peat Depth Model: Model"
+params:
+  params_fn: 
+    input: file
+    label: 'Select parameters to import (.rds)'
+    value: "../data/parameters_eng.rds"
+output:
+    html_notebook:
+    html_document:
+    df_print: paged
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo= TRUE)
+```
+
+-------  
+
+Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+
+```{r, echo=FALSE}
+#import parameters from previous runs
+parameters <- readRDS(file = params$params_fn)
+
+# if you need to change any imported parameters, do it here, e.g.: 
+  #parameters$existing_parameter <- newvalue
+  #parameters$new_parameter <- value
+
+# add new parameters from yaml header
+
+  # automatically defined session variables 
+  #set current time and date to append to run log 
+parameters$rundate <- paste0("run_", format(Sys.time(), format = "%Y%m%d-%H%M"))
+
+# print list of all parameters
+parameters
+  
+#set params for script
+par.ori <- par() #save default plotting parameters
+
+rundate <- parameters$rundate
+```
+
+
+-------    
+
+## Introduction
+
+This script allows you to:  
+
+1. asdjklasdfjlasdfl;sd
+
+
+
+```{r}
+#load packages
+library(tidyverse)#
+library(raster)
+library(rgdal)
+library(sp)
+library(sf)
+library(elevatr)
+library(geoR)
+library(gstat)
+library(stars)
+```
+## 1. Import previously prepared data
+
+```{r}
+# import input.data
+input.data.sp <- readRDS(parameters$input_data_prep.sp.fn)
+
+# create further transformations (sqrt already done)
+input.data.sp$log_depth <- log(input.data.sp$depth + 1)
+input.data.sp$cbrt_depth <- input.data.sp$depth^(1/3)
+
+
+input.data <- input.data.sp %>% as_tibble()
+```
+
+
+```{r}
+# import predictors
+
+# # import elevation and slope
+# elevation <- raster(parameters$elev_raster_fn)
+# slope <- raster(parameters$slope_raster_fn)
+# 
+# # stack predictors
+# predictors <- stack(elevation, slope)
+# names(predictors) <- c("elevation", "slope")
+
+# alternative import elevation and slope using stars
+preds_st <- read_stars(c(elev = parameters$elev_raster_fn, slope = parameters$slope_raster_fn), proxy = T)
+names(preds_st) <- c("elev", "slope")
+
+st_bbox(preds_st)
+st_crs(preds_st)
+```
+
+```{r}
+#check projections are the same
+st_crs(preds_st) == st_crs(input.data.sp)
+```
+
+
+
+```{r}
+plot(preds_st[1])
+plot(preds_st[2])
+```
+
+```{r}
+ggplot() + geom_stars(data = preds_st, downsample = 100) +
+  coord_equal() + theme_minimal()
+```
+
+```{r}
+predictors <- preds_st
+```
+
+
+###Create prediction area and crop input data
+
+```{r}
+#select a well sampled area to predict within----
+# plot(input.data.sp)
+#     #small area: 
+#     crop.extent <- extent(c(xmin = 25575, xmax = 260000, ymin = 75000, ymax = 80000))
+  #all dartmoor
+
+crop.extent <- st_bbox(predictors) %>% matrix(byrow = F, nrow = 2) %>% extent() #converts bbox to extent object for sp
+
+plot(crop(input.data.sp, crop.extent))
+
+input.data.cropped.sp <- crop(input.data.sp, crop.extent)
+
+dat <- data.frame(input.data.cropped.sp@data,
+                  input.data.cropped.sp@coords) %>%
+  rename(x = X, y = Y)
+
+input.data.cropped.map <- dat
+
+#THIS keeps crashing: memory exhausted.  Filesize to big. 
+# predictors.cropped.sp <- crop(predictors.sp, crop.extent)
+# rm(predictors.sp)
+# predictors.cropped.map <- data.frame(predictors.cropped.sp@data,
+#                                      predictors.cropped.sp@coords)
+```
+
+
+
+```{r}
+# CONVERT this to sf - to avoid converting tif to vector
+# #graph it
+# p.theme <- theme(legend.position = "right")
+# p.elev <- ggplot(predictors.cropped.map, aes(x = x, y = y)) +
+#   geom_point(aes(colour = elev)) + coord_equal() +
+#   geom_text(data = input.data.cropped.map, label = "x", size = 0.8)+
+#   scale_colour_distiller(palette = "Reds") +  
+#   labs(#title = "Elevation", 
+#        x = "", y = ""); p.elev + p.theme
+# 
+# p.slo <- ggplot(predictors.cropped.map, aes(x = x, y = y)) +
+#   geom_point(aes(colour = slope))  + coord_equal()+ 
+#   geom_text(data = input.data.cropped.map, label = "x", size = 0.8)+
+#   scale_colour_distiller(palette = "Greens") +  
+#   labs(#title = "Slope", 
+#        x = "", y = ""); p.slo + p.theme
+# # cowplot::plot_grid(p.elev + p.theme, p.asp + p.theme, p.slo + p.theme, axis = "left", nrow = 3, labels = "")
+```
+
+###Convert to inputs to gstat format 
+
+```{r}
+input.data.gs <- input.data.cropped.sp #spdf format
+
+#remove duplicates 
+input.data.gs <- remove.duplicates(obj = input.data.gs)
+
+#If duplicate locations are an important part of data then better to use jitterDupCoords
+summary(input.data.gs)
+summary(input.data.cropped.sp)
+```
+
+### Exploratory linear model analysis
+
+Using raw peat depth
+
+```{r}
+mod.lm.test <- lm(depth ~ elev + slope, data=dat)
+summary(mod.lm.test)
+
+resid <- residuals(mod.lm.test)
+plot(resid)
+qqnorm(resid)
+qqline(resid)
+dat$resid <- resid
+```
+not great
+
+
+
+  still not fantastic
+
+Using log of peat depth:...
+```{r}
+
+mod.lm.test <- lm(log_depth ~ elev + slope, data=dat)
+summary(mod.lm.test)
+
+resid <- residuals(mod.lm.test)
+plot(resid)
+qqnorm(resid)
+qqline(resid)
+dat$resid <- resid
+```
+
+terrible
+
+
+
+Using square root of peat depth:...
+```{r}
+mod.lm.test <- lm(sqrt_depth ~ elev + slope, data=dat)
+summary(mod.lm.test)
+
+resid <- residuals(mod.lm.test)
+plot(resid)
+qqnorm(resid)
+qqline(resid)
+dat$resid <- resid
+```
+
+meh
+
+Using cube root of peat depth:...
+```{r}
+mod.lm.test <- lm(cbrt_depth ~ elev + slope, data=dat)
+summary(mod.lm.test)
+
+resid <- residuals(mod.lm.test)
+plot(resid)
+qqnorm(resid)
+qqline(resid)
+dat$resid <- resid
+```
+I kinda like the cube root.  Lets do it: 
+
+
+
+
+
+## 3. Fit a geostatistical model to the data to look for evidence of spatial autocorrelation after accounting for covariates
+
+
+```{r}
+sp_depth <- input.data.gs
+```
+
+### Plot the spatial object
+In the top left plot the data have been split into 4 colours based on
+quartiles (red is highest)
+
+```{r}
+spplot(sp_depth)
+png(filename = paste0("../outputs/dat_overview_", 
+                      parameters$area_abbr, "_", 
+                      rundate, ".jpg"))
+spplot(sp_depth)
+dev.off()
+```
+
+### Fit a geostatistical model to all the data
+
+see also: https://www.r-spatial.org/r/2016/02/14/gstat-variogram-fitting.html 
+
+```{r}
+sp_depth.v <- variogram(cbrt_depth ~ elev + slope, sp_depth)
+sp_depth.vfit <- fit.variogram(sp_depth.v, 
+                               model = vgm(psill = NA, model = "Mat", range = NA, nugget = NA), fit.method = 1)
+plot(sp_depth.v, sp_depth.vfit)
+summary(sp_depth.vfit)
+```
+
+
+```{r}
+sp_depth.v <- variogram(cbrt_depth ~ elev + slope, sp_depth)
+sp_depth.vfit <- fit.variogram(sp_depth.v, 
+                               model = vgm(c("Exp", "Mat", "Sph", "Ste")), 
+                               #fit.kappa = seq(.3,5,.01), 
+                               fit.method = 1
+                               )
+plot(sp_depth.v, sp_depth.vfit)
+sp_depth.vfit
+
+
+```
+
+
+
+```{r}
+(model.geo.auto1 <- fit.variogram(sp_depth.v, 
+                               model = vgm(c("Exp", "Mat", "Sph", "Ste")), fit.kappa = seq(.3,5,.01)))
+
+(model.geo.auto2 <- fit.variogram(sp_depth.v, 
+                               model = vgm(c("Exp", "Mat", "Sph", "Ste")), fit.method = 1))
+
+(model.geo.exp <- fit.variogram(sp_depth.v, 
+                               model = vgm(model = "Exp"), fit.method = 1))
+
+(model.geo.sph <- fit.variogram(sp_depth.v, 
+                               model = vgm(model = "Sph"), fit.method = 1))
+
+(model.geo.mat <- fit.variogram(sp_depth.v, 
+                               model = vgm(model = "Mat"), fit.method = 1))
+
+```
+
+
+  
+```{r}
+plot(sp_depth.v, model = model.geo.sph, col = "blue", main = "Spherical")
+plot(sp_depth.v, model = model.geo.exp, col = "red", main = "Expontial")
+plot(sp_depth.v, model = model.geo.mat, col = "green", main = "Matern")
+plot(sp_depth.v, model = model.geo.auto1, col = "black", main = paste(model.geo.auto1$model[2]))
+plot(sp_depth.v, model = model.geo.auto2, col = "black", main = paste(model.geo.auto2$model[2]))
+```
+Exponential seems like best fit.  
+
+```{r}
+#chosen model
+model.geo <- model.geo.auto1
+summary(model.geo)
+
+```
+
+
+```{r}
+png(filename = paste0("../outputs/vgm__", 
+                      parameters$area_abbr, "_",
+                      rundate, ".jpg"))
+plot(sp_depth.v, model = model.geo, main = rundate)
+dev.off()
+plot(sp_depth.v, model = model.geo, main = rundate)
+
+```
+
+```{r}
+#export objects
+write_rds(model.geo, path = paste0("../outputs/model.geo_", 
+                                   parameters$area_abbr, "_", 
+                                   rundate, ".rds"))
+write_rds(input.data.gs, path = paste0("../outputs/input.data.gs_", 
+                                   parameters$area_abbr, "_", 
+                                   rundate, ".rds"))
+
+# export parameters
+saveRDS(parameters,  paste0("../data/parameters_", 
+                                      parameters$area_abbr, ".rds"))
+```
+
