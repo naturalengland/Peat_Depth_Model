@@ -141,7 +141,6 @@ krige.out <- krige.out %>% mutate(pred.btf = btf(var1.pred),
                                   interval = UPI - LPI)
 ```
 
-
 ```{r}
 #save to disk
 
@@ -170,7 +169,28 @@ write_stars(obj = krige.out, layer = "interval",
 ```
 
 
+```{r}
+#raster::extract environmental and topographic data for each peat depth measurement
+preds.compare <- raster::extract(raster(paste0("../outputs/krige.pred_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif")), coordinates(dat_sp)[,1:2]) 
 
+preds.compare <- data.frame(predictions = preds.compare, observations = dat_sf$depth) %>% 
+  mutate(residual = predictions - observations)
+
+
+
+cat(sep = "", "Peat depth output metrics for measured locations (", parameters$area_abbr, "_", parameters$rundate, 
+    "):\nR2 = ", rsq(observed = preds.compare$observations, predicted = preds.compare$predictions) %>% round(3),
+    ", R2 adj = ", rsq.adj(observed = preds.compare$observations, predicted = preds.compare$predictions, n.predictors = 2, df.int = 1) %>% round(3),
+    ", RMSE = ", rmse(observed = preds.compare$observations, predicted = preds.compare$predictions) %>% round(3), " cm", 
+    "\n(note this is not a metric for un-measured locations)")
+
+ggplot(data = preds.compare, aes(x = observations, y = predictions)) + 
+  geom_point() + geom_abline(slope = 1) + ggpubr::theme_pubr()
+
+ggplot(data = preds.compare, aes(x = residual)) + 
+  geom_histogram() + ggpubr::theme_pubr()
+```
 
 
 
