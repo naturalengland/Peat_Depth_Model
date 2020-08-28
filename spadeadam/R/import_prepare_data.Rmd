@@ -21,12 +21,12 @@ params:
   raster_source:
     input: select
     label: 'Source of raster data (pick TerrainTiles to automatically download terrain)'
-    value: TerrainTiles
+    value: select a local GeoTiff file
     choices: [TerrainTiles, select a local GeoTiff file]
   terrain_raster_file: 
     input: file
     label: 'Terrain raster file in GeoTiff format (if not selecting TerrainTiles)'
-    value: "../data/terr_dartmoor_12.tif"
+    value: "../data/terr_spade_12.tif"
   cell_size: 
     input: numeric
     label: "Desired raster resolution in metres:"
@@ -34,7 +34,7 @@ params:
   obs_path:
     input: file
     label: 'Observations data (shapefile):'
-    value: ../data/peatdepths-spade-LM-20180412.shp
+    value: ../data/peatdepthSpadeAll.shp
   projection:
     input: text
     label: 'Enter projection proj4 string (lookup at https://spatialreference.org, default is BNG):'
@@ -42,7 +42,7 @@ params:
   field_depth:
     input: text
     label: "peat depth field:"
-    value: "Peat.depth"
+    value: "Peat_depth"
 
 output:
     html_notebook:

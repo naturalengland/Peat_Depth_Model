@@ -28,6 +28,8 @@ parameters <- readRDS(file = params$params_fn)
   #parameters$existing_parameter <- newvalue
   #parameters$new_parameter <- value
 
+parameters$rundate <-  "run_20200828-1503"
+
 # add new parameters from yaml header
 
   # automatically defined session variables 
