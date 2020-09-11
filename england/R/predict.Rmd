@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters.rds"
+    value: "../data/parameters_eng.rds"
 output:
     html_notebook:
     html_document:
@@ -69,7 +69,7 @@ library(stars)
 ## 1. Import previously prepared data
 
 ```{r}
-model.geo <- readRDS("~/GitHub/Peat_Depth_Model_pr/workflow/outputs/model.geo__dart_run_20200623-1159.rds")
+model.geo <- readRDS("~/GitHub/Peat_Depth_Model/england/outputs/model.geo_eng_run_20200823-1202.rds")
 ```
 
 ```{r}
