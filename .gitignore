@@ -34,3 +34,17 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+#rasters and shapefiles
+*.tif
+*.rds
+*.cpg
+*.dbf
+*.prj
+*.shp
+*.shx
+*.xml
+
+#data folders
+england/data/*
+spadeadam/data/*
