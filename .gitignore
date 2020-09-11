@@ -46,6 +46,8 @@ rsconnect/
 *.xml
 
 #data folders
+template/data/*
+template/outputs/*
 england/data/*
 england/outputs/*
 spadeadam/data/*
