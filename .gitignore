@@ -34,3 +34,31 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+#rasters and shapefiles
+*.tif
+*.rds
+*.cpg
+*.dbf
+*.prj
+*.shp
+*.shx
+*.xml
+
+#data folders
+template/data/*
+template/outputs/*
+england/data/*
+england/outputs/*
+spadeadam/data/*
+spadeadam/outputs/*
+england/R/evaluate.html
+england/R/evaluate.nb.html
+england/R/explore_and_select_data.nb.html
+england/R/import_prepare_data.nb.html
+england/R/model.nb.html
+england/R/predict.nb.html
+england/R/visualise_model_results_template.nb.html
+outputs/eval_spade_run_20200806-1612.html
+Peat_Depth_Model.Rproj
+spadeadam/R/evaluate.html
