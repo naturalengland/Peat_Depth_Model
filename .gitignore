@@ -47,4 +47,6 @@ rsconnect/
 
 #data folders
 england/data/*
+england/outputs/*
 spadeadam/data/*
+spadeadam/outputs/*
