@@ -1,0 +1,165 @@
+---
+title: "Peat Depth Model: Explore and Select Data"
+params:
+  params_fn: 
+    input: file
+    label: 'Select parameters to import (.rds)'
+    value: "../data/parameters_spade.rds"
+output:
+    html_notebook:
+    html_document:
+    df_print: paged
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo= TRUE)
+```
+
+-------  
+
+Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+
+```{r, echo=FALSE}
+#import parameters from previous runs
+parameters <- readRDS(file = params$params_fn)
+
+# if you need to change any imported parameters, do it here, e.g.: 
+  #parameters$existing_parameter <- newvalue
+  #parameters$new_parameter <- value
+
+# add new parameters from yaml header
+
+
+# print list of all parameters
+parameters
+```
+
+
+-------    
+
+## Introduction
+
+This script allows you to:  
+
+1. Import previously prepared data:   
+    * peat observations with environmental covariate values
+    * rasters of environmental covariates
+    * a prediction area
+2. Explore the distribution of peat depths
+3. Explore the covariate space
+4. Stratify and or subset peat depth observations, predictors and prediction areas
+
+
+
+```{r}
+#load packages
+library(tidyverse)#
+library(raster)
+library(rgdal)
+library(sp)
+library(sf)
+library(elevatr)
+```
+
+
+## 1. Import previously prepared data
+
+```{r}
+# import input.data
+input.data.sp <- readRDS(parameters$input_data.sp.fn)
+input.data <- input.data.sp %>% as_tibble()
+
+# import elevation and slope
+elevation <- raster(parameters$elev_raster_fn)
+slope <- raster(parameters$slope_raster_fn)
+
+# stack predictors
+pred_stack <- stack(elevation, slope)
+```
+
+
+## 2. Explore the distribution of peat depths
+
+```{r}
+ggplot(input.data %>% filter(depth != 0), 
+       aes(x = depth)) +
+  geom_histogram(bins = 100) +
+  labs(title = "Distribution of peat depths sampled", x = "Peat depth in cm") +
+  theme_light()
+```
+
+## 3. Explore the covariate space
+
+
+```{r}
+ggplot(input.data, aes(x = X, y = Y)) +
+  geom_point(aes(colour = depth), size = 1) +
+  geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
+  scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
+  scale_x_continuous(breaks = seq(0,600000,20000)) +
+  scale_y_continuous(breaks = seq(0,1000000, 20000)) +
+  theme_light() +
+  coord_equal() +
+  labs(title = "Peat depth spatial distribution")
+```
+
+```{r}
+p.sl.el <- ggplot(input.data, aes(x = elev, y = slope)) +
+  geom_point(aes(colour = depth), size = 1)+
+  geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
+  scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
+  #coord_fixed(ratio = 15) +
+  theme_light() +
+  labs(title = "Peat depth: elevation by slope")
+
+filter_depth <- 200
+p.sl.el.deep <- ggplot(input.data %>% filter(depth > filter_depth), 
+       aes(x = elev, y = slope)) +
+  geom_point(aes(colour = depth), size = 1)+
+  geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
+  scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
+  #coord_fixed(ratio = 15) +
+  theme_light() +
+  labs(title = paste0("Deeper peat (>", filter_depth, "cm): elevation by slope"))
+
+plot(p.sl.el)
+plot(p.sl.el.deep)
+```
+
+
+```{r}
+#elev v depth
+ggplot(input.data, aes(x = depth, y = elev)) +
+  geom_point(aes(colour = depth), size = 1)+
+  geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
+  scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
+  #coord_fixed(ratio = 15) +
+  theme_light() +
+  labs(title = "Peat depth: elevation by depth")
+
+#slope v depth
+ggplot(input.data, aes(x = depth, y = slope)) +
+  geom_point(aes(colour = depth), size = 1)+
+  geom_rug(length = unit(0.02, "npc"), colour = "darkgrey") +
+  scale_colour_viridis_c(direction = -1, option = "plasma", end = 0.8)+
+  #coord_fixed(ratio = 15) +
+  theme_light() +
+  labs(title = "Peat depth: slope by depth")
+```
+
+
+
+
+
+## 4. Stratify and or subset peat depth observations, predictors and prediction areas
+
+
+
+
+```{r}
+# export parameters
+saveRDS(parameters,  paste0("../data/parameters_", 
+                                      parameters$area_abbr, ".rds"))
+```
+
