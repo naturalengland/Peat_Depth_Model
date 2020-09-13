@@ -70,28 +70,11 @@ library(stars)
 
 ```{r}
 model.geo <- readRDS("~/GitHub/Peat_Depth_Model/england/outputs/model.geo_eng_run_20200823-1202.rds")
+sp_depth <- readRDS(parameters$inputs_fn)
 ```
 
 ```{r}
 summary(model.geo)
-```
-
-```{r}
-model.geo$cov.pars
-```
-
-```{r}
-names(model.geo)
-```
-
-
-```{r}
-input.data.gs <- input.data.cropped.sp #spdf format
-
-#remove duplicates 
-input.data.gs <- remove.duplicates(obj = input.data.gs)
-
-sp_depth <- input.data.gs
 ```
 
 
@@ -104,14 +87,150 @@ slope_st <- read_stars(parameters$slope_raster_fn)
 preds_st <- c(elev = elevation_st, slope = slope_st)
 names(preds_st) <- c("elev", "slope")
 
-rm(elevation_st, slope_st)
+#rm(elevation_st, slope_st)
 
 #plot(preds_st[1])
+
+```
+
+$from
+[1] 1
+
+$to
+[1] 114203
+
+$offset
+[1] 82540
+
+$delta
+[1] 5
+
+
+$point
+[1] FALSE
+
+$values
+NULL
+
+$from
+[1] 1
+
+$to
+[1] 128824
+
+$offset
+[1] 649256
+
+$delta
+[1] -5
+
+*reasonable tile size for kriging*
+x = 10000
+y = 4000
+~0.3Gb per tile
+
+```{r}
+tracking <- data.frame(xoff = as.numeric(), yoff = as.numeric(), Gb <- as.character())
+
+#calculate tiles
+elev_dims <- st_dimensions(elevation_st)
+slope_dims <- st_dimensions(slope_st)
+
+xmax  <- elev_dims$x$to
+ymax  <- elev_dims$y$to
+xsize <- 10000
+ysize <- 4000
+
+xnfull      <- round(xmax/xsize, digits = 0) 
+xremainder  <- xmax-(xsize*xnfull)
+ynfull      <- round(ymax/ysize, digits = 0) 
+yremainder  <- ymax-(ysize*ynfull)
+
+tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull+1), 
+                    yoff = rep(seq(1, by = ysize, length.out = ynfull+1), each = xnfull+1))
+
+for(i in 186:187){    #nrow(tiles)) {
+xoff <- tiles$xoff[i] 
+yoff <- tiles$yoff[i]
+
+rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
+elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+# elev_tile <- st_transform_proj(x = elev_tile, crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
+
+slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+# slope_tile <- st_transform_proj(x = slope_tile, crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
+
+preds_tile <- c(elev_tile, slope_tile) #stack
+names(preds_tile) <- c("elev", "slope")
+rm(elev_tile, slope_tile)
+
+st_crs(preds_tile);  st_crs(sp_depth)
+st_crs(preds_tile) == st_crs(sp_depth)
+
+sp_depth_tf <- sp::spTransform(sp_depth, CRSobj = CRS("+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs"))
+
+
+Gb <- object.size(preds_tile)/1000000000
+tracking <- rbind(tracking, c(xoff = xoff, yoff = yoff, Gb = Gb))
+print(c(xoff, yoff, Gb))
+
+gstat::krige(formula = cbrt_depth ~ elev + slope, locations = sp_depth_tf,
+             newdata = preds_tile, model = model.geo)
+
+
+}
+
+
 ```
 
 
 ```{r}
-sp_depth <- sp::spTransform(x = sp_depth, CRSobj = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +a=6377563.396 +rf=299.324975315035 +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
+sf::st_coordinates(x)
+sf::st_crs(x)
+stars::st_raster_type(x)
+```
+
+
+
+
+
+
+```{r}
+nxoff <- 100000
+nyoff <- 50000
+rasterio <- list(nXOff = nxoff, nYOff = nyoff, nXSize = 114203-nxoff, nYSize = 128824-nyoff, bands = c(1))
+x <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = T, quiet = F)
+plot(x)
+```
+
+
+
+```{r}
+gstat::krige(formula = cbrt_depth ~ elev + slope, locations = sp_depth, 
+                   newdata = preds_st, model = model.geo)
+```
+
+
+
+
+
+
+```{r}
+input.data.gs <- input.data.sp #spdf format
+
+#remove duplicates 
+input.data.gs <- remove.duplicates(obj = input.data.gs)
+
+sp_depth <- input.data.gs
+
+```
+
+
+
+
+
+```{r}
+# sp_depth <- sp::spTransform(x = sp_depth, CRSobj = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +a=6377563.396 +rf=299.324975315035 +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
 ```
 
 
