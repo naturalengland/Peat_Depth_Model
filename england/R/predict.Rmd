@@ -148,9 +148,11 @@ ynfull      <- round(ymax/ysize, digits = 0)
 yremainder  <- ymax-(ysize*ynfull)
 
 tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull+1), 
-                    yoff = rep(seq(1, by = ysize, length.out = ynfull+1), each = xnfull+1))
+                    yoff = rep(seq(1, by = ysize, length.out = ynfull+1), each = xnfull+1),
+                    xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
+                    yxize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
 
-for(i in 186:196){    #nrow(tiles)) {
+for(i in 186){#196){    #nrow(tiles)) {
 start <- Sys.time()
 
 xoff <- tiles$xoff[i] 
@@ -171,7 +173,7 @@ sp_depth <- sp::spTransform(sp_depth, CRSobj = CRS("+proj=tmerc +lat_0=49 +lon_0
 Gb <- object.size(preds_tile)/1000000000
 print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb)))
 
-krige_out <- gstat::krige(formula = cbrt_depth ~ elev + slope, maxdist = 50,
+krige_out <- gstat::krige(formula = cbrt_depth ~ elev + slope, maxdist = 50, 
                           locations = sp_depth, 
                           newdata = preds_tile, 
                           model = model.geo)
@@ -190,6 +192,17 @@ rm(preds_tile, krige_out)
 ```
 Error in predict.gstat(g, newdata = newdata, block = block, nsim = nsim,  : 
   out of dynamic memory (try local kriging?)
+  
+  [1] "191"         "100001"      "100001"      "0.640013488"
+[using universal kriging]
+GDAL Error 5: F:\Users\Bruce\Documents\GitHub\Peat_Depth_Model\england\data\elev_eng_5m.tif: Access window out of range in RasterIO().  Requested (110000,60000) of size 10000x4000 on raster of 114203x128824.Error in CPL_read_gdal(as.character(x), as.character(options), as.character(driver),  : 
+  read failure
+
+```{r}
+temp_tile <- read_stars(paste0("../outputs/var_tile187_x60001_y60001.tif"))
+plot(temp_tile)
+```
+
 
 ```{r}
 sf::st_coordinates(x)
