@@ -156,10 +156,9 @@ y = 4000
 
 ```{r}
 tracking <- cbind(i = as.integer(), xoff = as.numeric(), yoff = as.numeric(), 
-                  Gb = as.character(), seconds = as.numeric()) %>% data.frame()
+                  Gb = as.character(), hasData = as.character(), seconds = as.numeric()) %>% data.frame()
 
-
-#calculate tiles
+# calculate tiles
 elev_dims <- st_dimensions(elevation_st)
 slope_dims <- st_dimensions(slope_st)
 
@@ -178,83 +177,65 @@ tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull
                     xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
                     ysize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
 
+# loop through each tile, test if it has any values, then krige the heck out of it
 
-i <- 187
-#for(i in 1:nrow(tiles)) {
-start <- Sys.time()
-
-xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
-
-rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
-elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F) 
-slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
-
-preds_tile <- c(elev_tile, slope_tile)
-names(preds_tile) <- c("elev", "slope")
-
-# elev_tile_r <- raster(elev_tile$elev_eng_5m.tif, crs = st_crs(elev_tile))
-# elev_tile_r[is.na(elev_tile_r)] <- 9999
-# slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
-# slope_tile_r[is.na(slope_tile_r)] <- 9999
-# 
-# elev_tile <- read_stars()
-
-# elev_tile_sf <- st_as_sf(elev_tile)
-# slope_tile_sf <- st_as_sf(slope_tile)
-# 
-# preds_tile_sf <- sf::st_join(elev_tile_sf, slope_tile_sf, left = F)
-# names(preds_tile_sf) <- c("elev", "slope")
-
-# #write tile to raster object
-# write_stars(elev_tile, paste0("../data/elev_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-# write_stars(slope_tile, paste0("../data/slope_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-# 
-# elev_tile <- raster(paste0("../data/elev_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-# slope_tile <- raster(paste0("../data/slope_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-# preds_tile <- stack(elev_tile, slope_tile)
-
-# # preds_tile <- c(elev_tile, slope_tile) #stack
-# # names(preds_tile) <- c("elev", "slope")
-# # elev_tile_sf <- stass
-# 
-# #preds_tile <- st_as_sfc(preds_tile, as_points = T)
-# elev_tile_sf <- st_as_sf(elev_tile, as_points = T,  merge = F)
-# slope_tile_sf <- st_as_sf(slope_tile, as_points = T,  merge = F)
-# 
-# preds_tile_sf <- sf::st_join(elev_tile_sf, slope_tile_sf, left = F)
-# names(preds_tile_sf) <- c("elev", "slope", "geometry")
-
-# rm(elev_tile, slope_tile)  # make space in memory
-
-# sp_depth <- sp::spTransform(sp_depth, CRSobj = CRS("+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs"))
-# depth_sf <- st_as_sf(sp_depth)
-# st_crs(depth_sf) <- st_crs(preds_tile_sf)
-
-
-Gb <- object.size(preds_tile)/1000000000 #calc size in memory
-print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb)))
-
-                                                                                                      krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
-                       maxdist = 2500, na.action = na.pass, 
-                       locations = dat_sf, 
-                       newdata = preds_tile, 
-                       model = model.geo)
-
-                                                                                                      #backtransform
-krige.out <- krige.out %>% mutate(pred.btf = btf(var1.pred), 
-                                  var.btf = btf(var1.var),
-                                  LPI = pred.btf - 1.96 * sqrt(var.btf),
-                                  UPI = pred.btf + 1.96 * sqrt(var.btf),
-                                  interval = UPI - LPI)
-
-write_stars(krige.out["var1.pred"], paste0("../outputs/pred_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-write_stars(krige.out["var1.var"], paste0("../outputs/var_tile", i, "_x", xoff, "_y", yoff, ".tif"))
-
-end <- Sys.time(); time <- difftime(end, start, units = "mins")
-tracking <- rbind(tracking, c(i = i, xoff = xoff, yoff = yoff, Gb = Gb, minutes = time))
-names(tracking) <- c("i", "xoff", "yoff", "Gb", "minutes")
-
-rm(preds_tile, krige.out) # make space in memory
+for(i in 1:nrow(tiles)) {
+  start <- Sys.time()
+  
+  xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
+  
+  rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
+  elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F) 
+  slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+  
+  preds_tile <- c(elev_tile, slope_tile)
+  names(preds_tile) <- c("elev", "slope")
+  
+  #read to local raster to assess if there are any non-null values
+  slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
+  
+  
+  if (!is.nan(cellStats(slope_tile_r, mean))) { #test if there are any non-null values
+    
+    rm(slope_tile_r)  
+    
+    Gb <- object.size(preds_tile)/1000000000 #calc size in memory
+    print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "Data")))
+    
+    krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
+                              maxdist = 2500, na.action = na.pass, 
+                              locations = dat_sf, 
+                              newdata = preds_tile, 
+                              model = model.geo)
+    #backtransform
+    krige.out <- krige.out %>% mutate(pred.btf = btf(var1.pred), 
+                                      var.btf = btf(var1.var),
+                                      LPI = pred.btf - 1.96 * sqrt(var.btf),
+                                      UPI = pred.btf + 1.96 * sqrt(var.btf),
+                                      interval = UPI - LPI)
+    
+    #export
+    write_stars(krige.out["var1.pred"], paste0("../outputs/tiles_", parameters$rundate, "/pred_tf_tl", 
+                                               i, "_x", xoff, "_y", yoff, ".tif"))
+    write_stars(krige.out["var1.var"], paste0("../outputs/tiles_", parameters$rundate, "/var_tl", 
+                                              i, "_x", xoff, "_y", yoff, ".tif"))
+    write_stars(krige.out["interval"], paste0("../outputs/tiles_", parameters$rundate, "/interval_tl", 
+                                              i, "_x", xoff, "_y", yoff, ".tif"))
+    
+    #record progress and results
+    end <- Sys.time(); time <- difftime(end, start, units = "mins")
+    tracking <- rbind(tracking, c(i = i, xoff = xoff, yoff = yoff, Gb = Gb, hasData = "Data", minutes = time))
+    names(tracking) <- c("i", "xoff", "yoff", "Gb", "hasData", "minutes")
+    
+    rm(preds_tile, krige.out) # make space in memory
+  } else {
+    Gb <- object.size(preds_tile)/1000000000 #calc size in memory
+    print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "noData")))
+    end <- Sys.time(); time <- difftime(end, start, units = "mins")
+    tracking <- rbind(tracking, c(i = i, xoff = xoff, yoff = yoff, Gb = Gb, isnull = "noData", minutes = NA))
+    names(tracking) <- c("i", "xoff", "yoff", "Gb", "hasData", "minutes")
+  }
+  
 }
 
 
