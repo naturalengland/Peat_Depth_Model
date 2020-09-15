@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters.rds"
+    value: "../data/parameters_spade.rds"
 output:
     html_notebook:
     html_document:
@@ -27,6 +27,8 @@ parameters <- readRDS(file = params$params_fn)
 # if you need to change any imported parameters, do it here, e.g.: 
   #parameters$existing_parameter <- newvalue
   #parameters$new_parameter <- value
+
+parameters$rundate <-  "run_20200828-1503"
 
 # add new parameters from yaml header
 
@@ -65,126 +67,132 @@ library(elevatr)
 library(geoR)
 library(gstat)
 library(stars)
+
+source("rsquared_funs.R")
+source("backtransform.R")
 ```
+
+```{r}
+#pre-set which back-transformation to use
+
+btf <- function(x) {
+  backtransform(x = x, tf = parameters$tf)
+}
+```
+
+
 ## 1. Import previously prepared data
 
 ```{r}
-model.geo <- readRDS("~/GitHub/Peat_Depth_Model_pr/workflow/outputs/model.geo__dart_run_20200623-1159.rds")
-```
+#import model and data
 
-```{r}
-summary(model.geo)
-```
+# import model
+model.geo <- readRDS(parameters$model_fn)
 
-```{r}
-model.geo$cov.pars
-```
+# import observations
+sp_depth <- readRDS(parameters$inputs_fn)
 
-```{r}
-names(model.geo)
-```
+# columns which identify the model run
+run_tag <- data.frame(area_abbr = rep(parameters$area_abbr, nrow(sp_depth)), rundate = rep(parameters$rundate, nrow(sp_depth)))
 
+# the data used to generate the model
+dat_sp <- cbind(sp_depth, 
+                parameters$area_abbr, parameters$rundate)
+names(dat_sp) <- c(names(sp_depth), "area_abbr", "rundate")
+dat_sp$id <- seq(1,nrow(sp_depth)) #add an index
 
-```{r}
-input.data.gs <- input.data.cropped.sp #spdf format
+# remove duplicates 
+dat_sp <- remove.duplicates(obj = dat_sp)
+dat_sf <- st_as_sf(dat_sp)
+# re-project
+#dat_sp <- sp::spTransform(x = dat_sp, CRSobj = crs(sp_depth))
 
-#remove duplicates 
-input.data.gs <- remove.duplicates(obj = input.data.gs)
-
-sp_depth <- input.data.gs
-```
-
-
-```{r}
-# import elevation and slope
-
+# import predictors as `stars` objects
 elevation_st <- stars::read_stars(parameters$elev_raster_fn)
 slope_st <- read_stars(parameters$slope_raster_fn)
  
 preds_st <- c(elev = elevation_st, slope = slope_st)
 names(preds_st) <- c("elev", "slope")
+preds_st <- st_set_crs(x = preds_st, value = st_crs(sp_depth))
 
-rm(elevation_st, slope_st)
-
-#plot(preds_st[1])
-```
-
-
-```{r}
-sp_depth <- sp::spTransform(x = sp_depth, CRSobj = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +a=6377563.396 +rf=299.324975315035 +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
-```
-
-
-```{r}
-# preds_st <- st_transform_proj(x = preds_st, crs = "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.48939999999 +units=m +no_defs")
-# 
-# preds_st <- st_transform_proj(x = preds_st, crs = proj4string(sp_depth))
+#rm(elevation_st, slope_st)
 ```
 
 ```{r}
-#ggplot() + geom_stars(preds_st) + coord_equal()
+#check projections are the same
+st_crs(preds_st) == st_crs(dat_sf)
 ```
-
-```{r}
-# library(ggplot2)
-# ggplot() + geom_stars(data = preds_st) +
-#     coord_equal() +
-#     facet_wrap(~band) +
-#     theme_void() +
-#     scale_x_discrete(expand=c(0,0))+
-#     scale_y_discrete(expand=c(0,0))
-```
-
 
 
 ## Prediction
 
 
 ```{r}
-krige.out <- krige(formula = sqrt_depth ~ elev + slope, 
-                   locations = sp_depth,
+krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
+                   locations = dat_sf,
                    newdata = preds_st,
                    model = model.geo)
+
+
+#backtransform
+
+krige.out <- krige.out %>% mutate(pred.btf = btf(var1.pred), 
+                                  var.btf = btf(var1.var),
+                                  LPI = pred.btf - 1.96 * sqrt(var.btf),
+                                  UPI = pred.btf + 1.96 * sqrt(var.btf),
+                                  interval = UPI - LPI)
 ```
 
 ```{r}
+#save to disk
+
 saveRDS(object = krige.out, file = paste0("../outputs/krige.out_", 
                       parameters$area_abbr, "_",
-                      rundate, ".rds"))
+                      parameters$rundate, ".rds"))
+write_stars(obj = krige.out, layer = "pred.btf", 
+            dsn = paste0("../outputs/krige.pred_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif"))
+
+write_stars(obj = krige.out, layer = "var.btf", 
+            dsn = paste0("../outputs/krige.var_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif"))
+
+write_stars(obj = krige.out, layer = "LPI", 
+            dsn = paste0("../outputs/krige.LPI_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif"))
+
+write_stars(obj = krige.out, layer = "UPI", 
+            dsn = paste0("../outputs/krige.UPI_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif"))
+
+write_stars(obj = krige.out, layer = "interval", 
+            dsn = paste0("../outputs/krige.interval_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif"))
 ```
 
 
 ```{r}
-class(krige.out)
-str(krige.out)
-plot(krige.out)
+#raster::extract environmental and topographic data for each peat depth measurement
+preds.compare <- raster::extract(raster(paste0("../outputs/krige.pred_", parameters$area_abbr, "_",
+                      parameters$rundate, ".tif")), coordinates(dat_sp)[,1:2]) 
+
+preds.compare <- data.frame(predictions = preds.compare, observations = dat_sf$depth) %>% 
+  mutate(residual = predictions - observations)
+
+
+
+cat(sep = "", "Peat depth output metrics for measured locations (", parameters$area_abbr, "_", parameters$rundate, 
+    "):\nR2 = ", rsq(observed = preds.compare$observations, predicted = preds.compare$predictions) %>% round(3),
+    ", R2 adj = ", rsq.adj(observed = preds.compare$observations, predicted = preds.compare$predictions, n.predictors = 2, df.int = 1) %>% round(3),
+    ", RMSE = ", rmse(observed = preds.compare$observations, predicted = preds.compare$predictions) %>% round(3), " cm", 
+    "\n(note this is not a metric for un-measured locations)")
+
+ggplot(data = preds.compare, aes(x = observations, y = predictions)) + 
+  geom_point() + geom_abline(slope = 1) + ggpubr::theme_pubr()
+
+ggplot(data = preds.compare, aes(x = residual)) + 
+  geom_histogram() + ggpubr::theme_pubr()
 ```
-
-```{r}
-stars::write_stars()
-
-methods(class = "stars")
-```
-
-```{r}
-krige.pred.rst <- raster(krige.out$var1.pred)
-krige.var.rst <- raster(krige.out$var1.var)
-
-writeRaster(x = krige.pred.rst, 
-            filename = paste0("../outputs/krige.pred_", parameters$area_abbr, "_",
-                      rundate, ".tif"))
-
-writeRaster(x = krige.var.rst, 
-            filename = paste0("../outputs/krige.var_", parameters$area_abbr, "_",
-                      rundate, ".tif"))
-
-rm(krige.pred.rst, krige.var.rst)
-rm(krige.out)
-
-```
-
-
-
 
 
 

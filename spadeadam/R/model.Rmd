@@ -95,14 +95,17 @@ input.data <- input.data.sp %>% as_tibble()
 # alternative import elevation and slope using stars
 preds_st <- read_stars(c(elev = parameters$elev_raster_fn, slope = parameters$slope_raster_fn), proxy = T)
 names(preds_st) <- c("elev", "slope")
-
-st_bbox(preds_st)
-st_crs(preds_st)
+# 
+# st_bbox(preds_st)
+# st_crs(preds_st)
 ```
 
 ```{r}
 #check projections are the same
 st_crs(preds_st) == st_crs(input.data.sp)
+```
+```{r}
+
 ```
 
 
@@ -113,7 +116,7 @@ plot(preds_st[2])
 ```
 
 ```{r}
-ggplot() + geom_stars(data = preds_st, downsample = 100) +
+ggplot() + geom_stars(data = preds_st) +
   coord_equal() + theme_minimal()
 ```
 
@@ -148,6 +151,7 @@ input.data.cropped.map <- dat
 # rm(predictors.sp)
 # predictors.cropped.map <- data.frame(predictors.cropped.sp@data,
 #                                      predictors.cropped.sp@coords)
+
 ```
 
 
@@ -181,9 +185,21 @@ input.data.gs <- input.data.cropped.sp #spdf format
 input.data.gs <- remove.duplicates(obj = input.data.gs)
 
 #If duplicate locations are an important part of data then better to use jitterDupCoords
-summary(input.data.gs)
-summary(input.data.cropped.sp)
+# summary(input.data.gs)
+# summary(input.data.cropped.sp)
 ```
+
+
+
+```{r}
+plot(elevation, main = "DTM: Elevation")
+plot(dat_sp, add = T, cex = 0.2)
+```
+```{r}
+plot(slope, main = "DTM: Slope")
+plot(dat_sp, add = T, cex = 0.2)
+```
+
 
 ### Exploratory linear model analysis
 
@@ -262,7 +278,7 @@ In the top left plot the data have been split into 4 colours based on
 quartiles (red is highest)
 
 ```{r}
-spplot(sp_depth)
+spplot(sp_depth["depth"])
 png(filename = paste0("../outputs/dat_overview_", 
                       parameters$area_abbr, "_", 
                       rundate, ".jpg"))
@@ -329,7 +345,7 @@ Exponential seems like best fit.
 
 ```{r}
 #chosen model
-model.geo <- model.geo.exp
+model.geo <- model.geo.auto1
 summary(model.geo)
 
 ```
