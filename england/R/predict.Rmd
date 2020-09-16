@@ -203,7 +203,7 @@ for(i in 1:nrow(tiles)) {
     print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "Data")))
     
     krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
-                              maxdist = 2500, na.action = na.pass, 
+                              maxdist = 8000, na.action = na.pass, 
                               locations = dat_sf, 
                               newdata = preds_tile, 
                               model = model.geo)
@@ -213,7 +213,7 @@ for(i in 1:nrow(tiles)) {
                                       LPI = pred.btf - 1.96 * sqrt(var.btf),
                                       UPI = pred.btf + 1.96 * sqrt(var.btf),
                                       interval = UPI - LPI)
-    
+    #need to add a line to make tiles directory
     #export
     write_stars(krige.out["var1.pred"], paste0("../outputs/tiles_", parameters$rundate, "/pred_tf_tl", 
                                                i, "_x", xoff, "_y", yoff, ".tif"))
@@ -249,8 +249,13 @@ GDAL Error 5: F:\Users\Bruce\Documents\GitHub\Peat_Depth_Model\england\data\elev
   read failure
 
 ```{r}
-temp_tile <- read_stars(paste0("../outputs/var_tile187_x60001_y60001.tif"))
-plot(temp_tile)
+#check if any of them worked
+tilelist <- list.files(path = paste0("../outputs/tiles_", parameters$rundate), full.names = T)
+for(i in 1:length(tilelist)){
+print(paste(i, tilelist[i]))
+try(temp_tile <- read_stars(tilelist[i]))
+try(plot(temp_tile))
+}
 ```
 
 
