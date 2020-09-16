@@ -177,19 +177,37 @@ tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull
                     xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
                     ysize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
 
+#test cropping by bounding box
+  NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", 
+                           verbose = TRUE) %>% st_as_sf()
+  site_bound <- NP_boundaries[which(NP_boundaries$NAME == "YORKSHIRE DALES"),] %>% as_Spatial()
+  # re-project
+  site_bound <- spTransform(site_bound, CRSobj = proj4string(dat_sp))
+  site_bbox <- st_bbox(c(xmin = 358152.2, ymin = 450897.0, 
+                         xmax = 378152.2, ymax = 470897.0), crs = st_crs(elevation_st))#st_bbox(site_bound)
+
 # loop through each tile, test if it has any values, then krige the heck out of it
 
 for(i in 1:nrow(tiles)) {
   start <- Sys.time()
   
-  xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
+  # xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
+  # 
+  # rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
+  # elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F) 
+  # slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
   
-  rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
-  elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F) 
-  slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+  elev_tile <- read_stars(parameters$elev_raster_fn)
+  slope_tile <- read_stars(parameters$slope_raster_fn)
+  
+  elev_tile <- elev_tile[site_bbox]
+  slope_tile <- slope_tile[site_bbox]
   
   preds_tile <- c(elev_tile, slope_tile)
+  preds_tile <- read_stars(preds_tile, proxy = F)
   names(preds_tile) <- c("elev", "slope")
+  
+  st_dimensions(preds_tile)
   
   #read to local raster to assess if there are any non-null values
   slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
@@ -200,10 +218,10 @@ for(i in 1:nrow(tiles)) {
     rm(slope_tile_r)  
     
     Gb <- object.size(preds_tile)/1000000000 #calc size in memory
-    print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "Data")))
+    #print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "Data")))
     
     krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
-                              maxdist = 8000, na.action = na.pass, 
+                              maxdist = 5000, 
                               locations = dat_sf, 
                               newdata = preds_tile, 
                               model = model.geo)
@@ -247,6 +265,15 @@ Error in predict.gstat(g, newdata = newdata, block = block, nsim = nsim,  :
 [using universal kriging]
 GDAL Error 5: F:\Users\Bruce\Documents\GitHub\Peat_Depth_Model\england\data\elev_eng_5m.tif: Access window out of range in RasterIO().  Requested (110000,60000) of size 10000x4000 on raster of 114203x128824.Error in CPL_read_gdal(as.character(x), as.character(options), as.character(driver),  : 
   read failure
+
+```{r}
+plot(st_as_sfc(site_bbox), reset = FALSE, border = NA) #this effectively crops the plotting window without the hassle of cropping the data
+plot(elevation_st, add = TRUE)
+plot(st_as_sfc(site_bbox), add = TRUE, border = "red")
+plot(dat_sf, add = TRUE)
+```
+
+
 
 ```{r}
 #check if any of them worked
