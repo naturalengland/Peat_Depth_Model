@@ -177,41 +177,47 @@ tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull
                     xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
                     ysize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
 
-#test cropping by bounding box
-  NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", 
-                           verbose = TRUE) %>% st_as_sf()
-  site_bound <- NP_boundaries[which(NP_boundaries$NAME == "YORKSHIRE DALES"),] %>% as_Spatial()
-  # re-project
-  site_bound <- spTransform(site_bound, CRSobj = proj4string(dat_sp))
-  site_bbox <- st_bbox(c(xmin = 358152.2, ymin = 450897.0, 
-                         xmax = 378152.2, ymax = 470897.0), crs = st_crs(elevation_st))#st_bbox(site_bound)
 
 # loop through each tile, test if it has any values, then krige the heck out of it
 
-for(i in 1:nrow(tiles)) {
+#for(i in 1:nrow(tiles)) {
   start <- Sys.time()
+
+  NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", 
+                           verbose = TRUE) %>% st_as_sf()
+
+  site_bound <- NP_boundaries[which(NP_boundaries$NAME == "YORKSHIRE DALES"),] 
+  site_bbox <- st_bbox(site_bound)
   
+  
+  #define an area that's got a lot of points in it, for testing
+  # site_bbox <- st_bbox(c(xmin = 378152.2, ymin = 470897.0, 
+  #                        xmax = 398152.2, ymax = 490897.0), 
+  #                      crs = st_crs(elevation_st)) #st_bbox(site_bound)
+  site_dims <- st_dimensions(elevation_st[site_bbox])  #get teh dimensions in raster coords of the cropped layer
+  
+  xoff <- site_dims$x$from; yoff <- site_dims$y$from; 
+  xsize <- site_dims$x$to - site_dims$x$from; ysize <- site_dims$y$to - site_dims$y$from
   # xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
   # 
-  # rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize, bands = c(1))
-  # elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F) 
-  # slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
-  
-  elev_tile <- read_stars(parameters$elev_raster_fn)
-  slope_tile <- read_stars(parameters$slope_raster_fn)
-  
-  elev_tile <- elev_tile[site_bbox]
-  slope_tile <- slope_tile[site_bbox]
-  
+  rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize)
+  elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+  slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
   preds_tile <- c(elev_tile, slope_tile)
-  preds_tile <- read_stars(preds_tile, proxy = F)
   names(preds_tile) <- c("elev", "slope")
+  
+
   
   st_dimensions(preds_tile)
   
   #read to local raster to assess if there are any non-null values
-  slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
+  # slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
   
+
+```
+
+
+```{r}
   
   if (!is.nan(cellStats(slope_tile_r, mean))) { #test if there are any non-null values
     
@@ -267,10 +273,27 @@ GDAL Error 5: F:\Users\Bruce\Documents\GitHub\Peat_Depth_Model\england\data\elev
   read failure
 
 ```{r}
-plot(st_as_sfc(site_bbox), reset = FALSE, border = NA) #this effectively crops the plotting window without the hassle of cropping the data
-plot(elevation_st, add = TRUE)
-plot(st_as_sfc(site_bbox), add = TRUE, border = "red")
+plot(elev_tile)
 plot(dat_sf, add = TRUE)
+
+```
+
+```{r}
+#crashes r
+#plot(dat_sf["depth"], reset = F, border = NA)
+# plot(elev_tile, add = T)
+
+# plot(elevation_st[site_bbox])
+# plot(st_as_sfc(st_bbox(elevation_st)), add = TRUE, border = "green")
+
+plot(st_as_sfc(st_bbox(elev_tile)), reset = FALSE, border = NA) #this effectively crops the plotting window without the hassle of cropping the data
+plot(elev_tile, add = TRUE)
+#plot(elevation_st, add = TRUE)
+#plot(elevation_st[site_bbox], add = TRUE)
+plot(st_as_sfc(st_bbox(elev_tile)), 
+     add = TRUE, 
+     border = "red")
+plot(dat_sf["depth"], add = TRUE, cex = 0.2)
 ```
 
 
