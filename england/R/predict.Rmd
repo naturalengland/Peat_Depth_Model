@@ -155,6 +155,24 @@ y = 4000
 ~0.3Gb per tile
 
 ```{r}
+# import tiled file for testing
+
+elev_tile <- read_stars("../data/elev_tiles/elev_tiles.151.tif")
+slope_tile <- read_stars("../data/slope_tiles/slope_tiles.151.tif")
+preds_tile <- c(elev_tile, slope_tile)
+plot(elev_tile, reset = FALSE)
+plot(elevation_st, 
+#add = T,
+     extent = st_bbox(elev_tile))
+plot(dat_sf["depth"], 
+     #add = T,
+     extent = st_bbox(elev_tile))
+```
+
+
+
+
+```{r}
 tracking <- cbind(i = as.integer(), xoff = as.numeric(), yoff = as.numeric(), 
                   Gb = as.character(), hasData = as.character(), seconds = as.numeric()) %>% data.frame()
 
