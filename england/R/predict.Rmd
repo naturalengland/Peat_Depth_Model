@@ -255,7 +255,7 @@ length(tilelist)/2
     #print(as.character(c(i = i, xoff = xoff, yoff = xoff, Gb = Gb, hasData = "Data")))
     
     krige.out <- gstat::krige(formula = cbrt_depth ~ elev + slope, 
-                              maxdist = 5000, 
+                              maxdist = 5000, nmax = 10,
                               locations = dat_sf, 
                               newdata = preds_tile, 
                               model = model.geo)
