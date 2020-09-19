@@ -157,70 +157,80 @@ y = 4000
 ```{r}
 # import tiled file for testing
 
-elev_tile <- read_stars("../data/elev_tiles/elev_tiles.151.tif")
-slope_tile <- read_stars("../data/slope_tiles/slope_tiles.151.tif")
+elev_tile <- read_stars("../data/tiles_5k/elev_eng_5m-449.tif", proxy = F)
+slope_tile <- read_stars("../data/tiles_5k/slope_eng_5m-449.tif", proxy = F)
+
 preds_tile <- c(elev_tile, slope_tile)
+
 plot(elev_tile, reset = FALSE)
-plot(elevation_st, 
-#add = T,
-     extent = st_bbox(elev_tile))
-plot(dat_sf["depth"], 
-     #add = T,
-     extent = st_bbox(elev_tile))
+# plot(elevation_st, 
+# #add = T,
+#      extent = st_bbox(elev_tile))
+plot(dat_sf["depth"], add = T)
 ```
 
 
 
 
 ```{r}
-tracking <- cbind(i = as.integer(), xoff = as.numeric(), yoff = as.numeric(), 
-                  Gb = as.character(), hasData = as.character(), seconds = as.numeric()) %>% data.frame()
+# tracking <- cbind(i = as.integer(), xoff = as.numeric(), yoff = as.numeric(), 
+#                   Gb = as.character(), hasData = as.character(), seconds = as.numeric()) %>% data.frame()
+# 
+# # calculate tiles
+# elev_dims <- st_dimensions(elevation_st)
+# slope_dims <- st_dimensions(slope_st)
+# 
+# xmax  <- elev_dims$x$to
+# ymax  <- elev_dims$y$to
+# xsize <- 10000
+# ysize <- 4000
+# 
+# xnfull      <- round(xmax/xsize, digits = 0) 
+# xremainder  <- xmax-(xsize*xnfull)
+# ynfull      <- round(ymax/ysize, digits = 0) 
+# yremainder  <- ymax-(ysize*ynfull)
+# 
+# tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull+1), 
+#                     yoff = rep(seq(1, by = ysize, length.out = ynfull+1), each = xnfull+1),
+#                     xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
+#                     ysize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
+# 
+# NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", 
+#                            verbose = TRUE) %>% st_as_sf()
+# 
+#   site_bound <- NP_boundaries[which(NP_boundaries$NAME == "YORKSHIRE DALES"),] 
+#   site_bbox <- st_bbox(site_bound)
+#   
+#   
+#   #define an area that's got a lot of points in it, for testing
+#   # site_bbox <- st_bbox(c(xmin = 378152.2, ymin = 470897.0, 
+#   #                        xmax = 398152.2, ymax = 490897.0), 
+#   #                      crs = st_crs(elevation_st)) #st_bbox(site_bound)
+#   site_dims <- st_dimensions(elevation_st[site_bbox])  #get teh dimensions in raster coords of the cropped layer
+#   
+#   xoff <- site_dims$x$from; yoff <- site_dims$y$from; 
+#   xsize <- site_dims$x$to - site_dims$x$from; ysize <- site_dims$y$to - site_dims$y$from
+#   # xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
+#   # 
+#   rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize)
+```
 
-# calculate tiles
-elev_dims <- st_dimensions(elevation_st)
-slope_dims <- st_dimensions(slope_st)
 
-xmax  <- elev_dims$x$to
-ymax  <- elev_dims$y$to
-xsize <- 10000
-ysize <- 4000
-
-xnfull      <- round(xmax/xsize, digits = 0) 
-xremainder  <- xmax-(xsize*xnfull)
-ynfull      <- round(ymax/ysize, digits = 0) 
-yremainder  <- ymax-(ysize*ynfull)
-
-tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull+1), 
-                    yoff = rep(seq(1, by = ysize, length.out = ynfull+1), each = xnfull+1),
-                    xsize = rep(c(rep(xsize, length.out = xnfull), xremainder), ynfull+1),
-                    ysize = c(rep(ysize, length.out = (xnfull+1)*ynfull), rep(yremainder, xnfull+1)))
-
+```{r}
+# list of tiles
+tilelist <- list.files(path = "../data/tiles_5k", pattern = "*.tif$", ignore.case = T)
+length(tilelist)/2
 
 # loop through each tile, test if it has any values, then krige the heck out of it
 
 #for(i in 1:nrow(tiles)) {
   start <- Sys.time()
 
-  NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", 
-                           verbose = TRUE) %>% st_as_sf()
-
-  site_bound <- NP_boundaries[which(NP_boundaries$NAME == "YORKSHIRE DALES"),] 
-  site_bbox <- st_bbox(site_bound)
   
-  
-  #define an area that's got a lot of points in it, for testing
-  # site_bbox <- st_bbox(c(xmin = 378152.2, ymin = 470897.0, 
-  #                        xmax = 398152.2, ymax = 490897.0), 
-  #                      crs = st_crs(elevation_st)) #st_bbox(site_bound)
-  site_dims <- st_dimensions(elevation_st[site_bbox])  #get teh dimensions in raster coords of the cropped layer
-  
-  xoff <- site_dims$x$from; yoff <- site_dims$y$from; 
-  xsize <- site_dims$x$to - site_dims$x$from; ysize <- site_dims$y$to - site_dims$y$from
-  # xoff <- tiles$xoff[i]; yoff <- tiles$yoff[i]; xsize <- tiles$xsize[i]; ysize <- tiles$ysize[i]
-  # 
-  rasterio <- list(nXOff = xoff, nYOff = yoff, nXSize = xsize, nYSize = ysize)
-  elev_tile <- read_stars(parameters$elev_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
-  slope_tile <- read_stars(parameters$slope_raster_fn, RasterIO = rasterio, proxy = F, quiet = F)
+  elev_tile <- read_stars("../data/tiles_5k/elev_eng_5m-449.tif", 
+                          proxy = F, quiet = F)
+  slope_tile <- read_stars("../data/tiles_5k/slope_eng_5m-449.tif", 
+                           proxy = F, quiet = F)
   preds_tile <- c(elev_tile, slope_tile)
   names(preds_tile) <- c("elev", "slope")
   
@@ -229,7 +239,7 @@ tiles <- data.frame(xoff = rep(seq(1, by = xsize, length.out = xnfull+1), ynfull
   st_dimensions(preds_tile)
   
   #read to local raster to assess if there are any non-null values
-  # slope_tile_r <- raster(slope_tile$slope_eng_5m.tif, crs = st_crs(slope_tile))
+  slope_tile_r <- raster(slope_tile$`slope_eng_5m-449.tif`, crs = st_crs(slope_tile))
   
 
 ```
