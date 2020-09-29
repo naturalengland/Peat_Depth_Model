@@ -4,19 +4,19 @@ params:
   area_name: 
     input: text
     label: 'Long name of area to be modelled'
-    value: Spadeadam
+    value: England
   area_abbr:
     input: text
     label: 'Abbreviation of the area to be modelled to label outputs'
-    value: spade
+    value: eng
   pred_bound: 
     input: file
     label: 'Prediction boundary: select shapefile (leave as-is if selecting NP)'
-    value: ../data/site_box.shp
+    value: ../data/peaty_soils/Peaty_Soils_buff_200m.shp
   NP: 
     input: select
     label: 'Prediction boundary: select National Park if applicable'
-    value: DARTMOOR
+    value: NA
     choices: [NA, DARTMOOR, EXMOOR, LAKE DISTRICT, NEW FOREST, NORTH YORK MOORS, NORTHUMBERLAND, PEAK DISTRICT, SOUTH DOWNS, THE BROADS, YORKSHIRE DALES]
   raster_source:
     input: select
@@ -26,7 +26,7 @@ params:
   terrain_raster_file: 
     input: file
     label: 'Terrain raster file in GeoTiff format (if not selecting TerrainTiles)'
-    value: "../data/terr_dartmoor_12.tif"
+    value: "../data/terr_eng_12.tif"
   cell_size: 
     input: numeric
     label: "Desired raster resolution in metres:"
@@ -34,7 +34,7 @@ params:
   obs_path:
     input: file
     label: 'Observations data (shapefile):'
-    value: ../data/peatdepths-spade-LM-20180412.shp
+    value: ../data/peat_depth_data/Combined_Peat_Depth_Survey_Data_NOV2012_ALLDATA.shp
   projection:
     input: text
     label: 'Enter projection proj4 string (lookup at https://spatialreference.org, default is BNG):'
@@ -42,7 +42,7 @@ params:
   field_depth:
     input: text
     label: "peat depth field:"
-    value: "Peat.depth"
+    value: "PEAT_DEPTH"
 
 output:
     html_notebook:
@@ -136,7 +136,7 @@ This section
   # note that you can change the zoom level.  14 is most detail (about 3m resolution) but huge files
 if(parameters$raster_source == "TerrainTiles"){
   zoom <- 12
-  elevation_orig <- get_elev_raster(locations = site_bound, z = zoom)
+  elevation_orig <- get_elev_raster(locations = site_bound, z = zoom, clip = "locations")
   writeRaster(elevation_orig, paste0("../data/terr_", parameters$area_abbr, "_", zoom, ".tif"), overwrite = TRUE)
 }
 
@@ -199,7 +199,7 @@ data <- data.frame(data.shp)
 coords <- st_coordinates(data.shp)
 data.sp <- sp::SpatialPointsDataFrame(data = data, coords = coords, proj4string = CRS(proj4string(site_bound)))
 
-#head(data.sp)
+head(data.sp)
 ```
 
 ## 5. Extract environmental covariates for each peat depth observation

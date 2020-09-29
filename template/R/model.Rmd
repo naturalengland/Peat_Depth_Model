@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters_spade.rds"
+    value: "../data/parameters_eng.rds"
 output:
     html_notebook:
     html_document:
@@ -70,7 +70,7 @@ library(stars)
 
 ```{r}
 # import input.data
-input.data.sp <- readRDS(parameters$input_data.sp.fn)
+input.data.sp <- readRDS(parameters$input_data_prep.sp.fn)
 
 # create further transformations (sqrt already done)
 input.data.sp$log_depth <- log(input.data.sp$depth + 1)
@@ -217,7 +217,8 @@ qqnorm(resid)
 qqline(resid)
 dat$resid <- resid
 ```
-actually not the end of the world
+
+terrible
 
 
 
@@ -232,6 +233,8 @@ qqnorm(resid)
 qqline(resid)
 dat$resid <- resid
 ```
+
+meh
 
 Using cube root of peat depth:...
 ```{r}
@@ -329,7 +332,7 @@ Exponential seems like best fit.
 
 ```{r}
 #chosen model
-model.geo <- model.geo.exp
+model.geo <- model.geo.auto1
 summary(model.geo)
 
 ```
