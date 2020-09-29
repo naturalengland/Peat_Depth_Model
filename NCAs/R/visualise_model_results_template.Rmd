@@ -1,0 +1,54 @@
+---
+title: "Peat Depth Model: performance"
+output: html_notebook
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, include = FALSE)
+
+library(tidyverse)
+library(geoR)
+```
+
+
+```{r}
+#Import data
+metrics <- read.csv("../outputs/metrics_combined.csv")
+```
+
+
+
+
+```{r}
+graphdata <- metrics %>% spread(key = metric, value = value)
+
+
+ggplot(graphdata, aes(x = cv.bias.lm, y = cv.bias.sm)) +
+  geom_point()
+
+```
+
+
+```{r}
+ggplot(metrics, aes(x = run, y = as.numeric(value))) +
+  geom_col() +
+  #scale_y_continuous(labels = NULL) +
+  scale_x_discrete(labels = NULL) +
+  facet_wrap(~metric)
+```
+
+
+```{r}
+plot(as.numeric(metrics$value))
+
+```
+
+```{r}
+# export parameters
+saveRDS(parameters,  paste0("../data/parameters_", 
+                                      parameters$area_abbr, ".rds"))
+```

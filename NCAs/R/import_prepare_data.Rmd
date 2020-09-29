@@ -1,0 +1,261 @@
+---
+title: "Peat Depth Model: Import and Prepare Data"
+params:
+  area_name: 
+    input: text
+    label: 'Long name of area to be modelled'
+    value: England
+  area_abbr:
+    input: text
+    label: 'Abbreviation of the area to be modelled to label outputs'
+    value: eng
+  pred_bound: 
+    input: file
+    label: 'Prediction boundary: select shapefile (leave as-is if selecting NP)'
+    value: ../data/peaty_soils/Peaty_Soils_buff_200m.shp
+  NP: 
+    input: select
+    label: 'Prediction boundary: select National Park if applicable'
+    value: NA
+    choices: [NA, DARTMOOR, EXMOOR, LAKE DISTRICT, NEW FOREST, NORTH YORK MOORS, NORTHUMBERLAND, PEAK DISTRICT, SOUTH DOWNS, THE BROADS, YORKSHIRE DALES]
+  raster_source:
+    input: select
+    label: 'Source of raster data (pick TerrainTiles to automatically download terrain)'
+    value: TerrainTiles
+    choices: [TerrainTiles, select a local GeoTiff file]
+  terrain_raster_file: 
+    input: file
+    label: 'Terrain raster file in GeoTiff format (if not selecting TerrainTiles)'
+    value: "../data/terr_eng_12.tif"
+  cell_size: 
+    input: numeric
+    label: "Desired raster resolution in metres:"
+    value: 5
+  obs_path:
+    input: file
+    label: 'Observations data (shapefile):'
+    value: ../data/peat_depth_data/Combined_Peat_Depth_Survey_Data_NOV2012_ALLDATA.shp
+  projection:
+    input: text
+    label: 'Enter projection proj4 string (lookup at https://spatialreference.org, default is BNG):'
+    value: +proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs 
+  field_depth:
+    input: text
+    label: "peat depth field:"
+    value: "PEAT_DEPTH"
+
+output:
+    html_notebook:
+    html_document:
+    df_print: paged
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+-------  
+
+Run at `r Sys.time()` for **`r params$area_name`** (*`r params$area_abbr`*) with the following parameters: 
+
+```{r, echo=FALSE}
+# start saving project parameters
+parameters <- params
+parameters 
+```
+
+
+-------    
+
+## Introduction
+
+This script allows you to:  
+
+1. Import or define your prediction area
+2. Download an elevation raster for your prediction area
+3. Calculate a slope raster
+4. Import a shapefile of peat depths
+5. Extract environmental covariates for each peat depth observation
+6. Export environmental covariate rasters and a table of peat depth observations and covariate values
+
+
+This script downloads terrain rasters for a given area. 
+
+```{r}
+#load packages
+library(tidyverse)#
+library(raster)
+library(rgdal)
+library(sp)
+library(sf)
+library(elevatr)
+```
+
+
+##  1. Prediction boundary
+
+```{r}
+#get boundary shapefile if one is specified
+if(parameters$pred_bound != "National Park"){
+site_bound <- sf::st_read(parameters$pred_bound) %>% as_Spatial()}
+
+#get NP boundary if a no boundary shapefile specified
+if(parameters$pred_bound == "National Park"){
+# Import site boundary from National Park
+  NP_boundaries <- readOGR(dsn = "../data/NP_boundaries/National_Parks__England____Natural_England.shp", verbose = TRUE) %>% 
+    st_as_sf()
+  site_bound <- NP_boundaries[which(NP_boundaries$NAME == parameters$NP),] %>% as_Spatial()
+}
+
+# re-project
+site_bound <- spTransform(site_bound, CRSobj = parameters$projection)
+
+# export
+saveRDS(site_bound, "../data/site_bound.rds")
+
+#clean up
+if(exists("NP_boundaries")){rm(NP_boundaries)}
+plot(site_bound)
+```
+
+## 2. Obtain elevation raster
+
+This section 
+
+* loads a terrain raster:  
+    + downloads a terrain raster from TerrainTiles, if the option is selected, and writes that terrain raster to a local GeoTiff file (named `terr_area_abbr_zoom.tif`)  
+    + alternatively loads a terrain raster from a local GeoTiff if a file path is provided.    
+* resamples the raster to the desired resoution `cell_size` and reprojects it
+* crops the terrain raster to the prediction area.  
+* creates a slope raster and saves this to a local GeoTiff (named `slope_area_abbr_zoom.tif`)
+
+
+```{r}
+#if selected, get terrain tiles from TerrainTiles at stated zoom level. 
+  # note that you can change the zoom level.  14 is most detail (about 3m resolution) but huge files
+if(parameters$raster_source == "TerrainTiles"){
+  zoom <- 12
+  elevation_orig <- get_elev_raster(locations = site_bound, z = zoom, clip = "locations")
+  writeRaster(elevation_orig, paste0("../data/terr_", parameters$area_abbr, "_", zoom, ".tif"), overwrite = TRUE)
+}
+
+if(parameters$raster_source == "select a local GeoTiff file"){
+  elevation_orig <- raster(parameters$terrain_raster_file)
+  zoom <- 12
+}
+```
+
+## 3. Reformat elevation and calculate a slope raster
+
+```{r}
+#create an empty raster of desired dimension and resolution to reproject and resample to
+
+empty_raster <- raster(extent(site_bound), crs = parameters$projection, 
+                       res = parameters$cell_size) 
+
+#reproject to osgb and resample to desired cell size
+
+elevation <- resample(x = elevation_orig, y = empty_raster)
+
+#tidy up
+rm(elevation_orig, empty_raster)
+
+#create filenames and save to parameters
+parameters$elev_raster_fn <- paste0("../data/elev_", 
+                                    parameters$area_abbr, "_", 
+                                    parameters$cell_size, "m.tif")
+
+parameters$slope_raster_fn <- paste0("../data/slope_", 
+                                     parameters$area_abbr, "_", 
+                                     parameters$cell_size, "m.tif")
+
+#export to tif file
+writeRaster(elevation, filename = parameters$elev_raster_fn, overwrite = TRUE)
+
+#calculate slope and export to tif file
+slope <- terrain(elevation, opt="slope", unit="degrees", neighbors=8, 
+                 filename = parameters$slope_raster_fn, 
+                 overwrite = TRUE)
+
+#slope <- raster(paste0("../data/slope_", parameters$area_abbr, "_", parameters$cell_size, "m.tif")) #use this if you've already got a slope file
+#plot(slope)
+```
+
+
+## 4. Import a shapefile of peat depths
+
+This section: 
+
+* imports peat depth observations from a shapefile
+
+
+```{r observations}
+  #Import observations----
+data.shp <- sf::st_read(parameters$obs_path)
+data.shp <- sf::st_transform(x = data.shp, crs = CRS(proj4string(site_bound)))
+#create datafram and spatial points data frame
+data <- data.frame(data.shp)
+coords <- st_coordinates(data.shp)
+data.sp <- sp::SpatialPointsDataFrame(data = data, coords = coords, proj4string = CRS(proj4string(site_bound)))
+
+head(data.sp)
+```
+
+## 5. Extract environmental covariates for each peat depth observation
+
+
+```{r}
+#create dataframe with peat depth as first col
+input.data <- data.frame(peat_depth = data[parameters$field_depth])
+names(input.data) <- "depth"
+# transform peat depth data
+input.data$sqrt_depth <- sqrt(input.data$depth)
+
+#raster::extract environmental and topographic data for each peat depth measurement
+input.data$elev <- raster::extract(
+  elevation, coordinates(data.sp)[,1:2])
+input.data$slope <- raster::extract(slope, coordinates(data.sp)[,1:2])
+
+#convert to spatial points data frame
+coords <- st_coordinates(data.shp)
+proj4 <- parameters$projection
+
+input.data.sp <- sp::SpatialPointsDataFrame(data = input.data, coords = coords, proj4string = CRS(proj4))
+
+
+spplot(input.data.sp)
+```
+
+
+
+
+```{r}
+summary(input.data.sp)
+```
+
+
+## 6. Export table of peat depth observations and covariate values
+
+```{r}
+# create filename and save to parameters
+parameters$input_data.sp.fn <- paste0("../data/input.data_", 
+                                      parameters$area_abbr, "_", 
+                                      parameters$cell_size, "m.rds")
+
+# export observations and covariates table
+saveRDS(input.data.sp, parameters$input_data.sp.fn)
+```
+
+```{r}
+# export parameters
+saveRDS(parameters,  paste0("../data/parameters_", 
+                                      parameters$area_abbr, ".rds"))
+parameters
+```
+
+
+
+
+
+
