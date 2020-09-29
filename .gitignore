@@ -62,3 +62,6 @@ england/R/visualise_model_results_template.nb.html
 outputs/eval_spade_run_20200806-1612.html
 spadeadam/R/evaluate.html
 Peat_Depth_Model.Rproj
+.RDataTmp
+Peat_Depth_Model.mxd
+Peat_Depth_Model.qgz

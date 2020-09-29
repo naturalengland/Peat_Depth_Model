@@ -4,7 +4,7 @@ params:
   params_fn: 
     input: file
     label: 'Select parameters to import (.rds)'
-    value: "../data/parameters_spade.rds"
+    value: "../data/parameters_eng.rds"
 output:
     html_notebook:
     html_document:
@@ -68,8 +68,20 @@ library(elevatr)
 ```{r}
 # import input.data
 input.data.sp <- readRDS(parameters$input_data.sp.fn)
+summary(input.data.sp)
+
+#remove observations without elevation or slope
+input.data.sp <- input.data.sp[which(
+  input.data.sp$elev != is.na(input.data.sp$elev) &
+    input.data.sp$slope != is.na(input.data.sp$slope)),]
+
 input.data <- input.data.sp %>% as_tibble()
 
+summary(input.data.sp)
+```
+
+
+```{r}
 # import elevation and slope
 elevation <- raster(parameters$elev_raster_fn)
 slope <- raster(parameters$slope_raster_fn)
@@ -154,7 +166,17 @@ ggplot(input.data, aes(x = depth, y = slope)) +
 
 ## 4. Stratify and or subset peat depth observations, predictors and prediction areas
 
+## 5. Export table of peat depth observations and covariate values
 
+```{r}
+# create filename and save to parameters
+parameters$input_data_prep.sp.fn <- paste0("../data/input.data_", 
+                                      parameters$area_abbr, "_", 
+                                      parameters$cell_size, "m.rds")
+
+# export observations and covariates table
+saveRDS(input.data.sp, parameters$input_data_prep.sp.fn)
+```
 
 
 ```{r}
