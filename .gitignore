@@ -65,3 +65,13 @@ Peat_Depth_Model.Rproj
 .RDataTmp
 Peat_Depth_Model.mxd
 Peat_Depth_Model.qgz
+*.pdf
+data/England_Peat_Status/Peat data headers.xls
+data/England_Peat_Status/Read Me - Peat Project shapefiles 03-07-2020.txt
+*.sbn
+*.sbx
+*.lock
+data/peaty_soils/density_peatysoils_intersect.xls
+data/peaty_soils/Peaty_Soils_Location_table.xls
+*.tfw
+*.ovr
